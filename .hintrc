@@ -22,6 +22,7 @@
       {
         "document-title": "off"
       }
-    ]
+    ],
+    "no-inline-styles": "off"
   }
 }
