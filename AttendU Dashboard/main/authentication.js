@@ -3,7 +3,7 @@ let passwordInput = document.getElementById('password');
 
 let logindata = {
     "username": "AttendU78",
-    "password": "gf787r8f"
+    "password": "b0ESC0OG4ikm"
 }
 
 function validateLogin(username, password) {

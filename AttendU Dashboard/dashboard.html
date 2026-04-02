@@ -1,15 +1,138 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الصفحة الرئيسية</title>
-    <link rel="shortcut icon" href="./assets/icons/icons8-attendance-96.png" type="image/x-icon">
-    <link rel="stylesheet" href="./assets/styles/master.css">
-</head>
-<body>
 
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الصفحة الرئيسية</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="shortcut icon" href="./assets/icons/icons8-attendance-96.png" type="image/x-icon" />
+
+    <link rel="stylesheet" href="./assets/styles/master.css" />
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <img src="./assets/icons/icons8-attendance-96.png" alt="AttendU" class="logo" />
+                    <h1 class="logo-text">AttendU</h1>
+                </div>
+
+                <button class="sidebar-toggle d-lg-none" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="./pages/Overview.html" class="nav-link" data-page="overview">
+                            <i class="fas fa-home nav-icon"></i>
+                            <span class="nav-text">لمحة عامة</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="./pages/Live_session.html" class="nav-link" data-page="live-session">
+                            <i class="fas fa-video nav-icon"></i>
+                            <span class="nav-text">الجلسات المباشرة</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="./pages/Sessions_schedules.html" class="nav-link" data-page="schedules">
+                            <i class="fas fa-calendar-alt nav-icon"></i>
+                            <span class="nav-text">جداول الجلسات</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="./pages/Sessions_info.html" class="nav-link" data-page="sessions">
+                            <i class="fas fa-list nav-icon"></i>
+                            <span class="nav-text">معلومات الجلسات</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="./pages/Students_management.html" class="nav-link" data-page="students">
+                            <i class="fas fa-users nav-icon"></i>
+                            <span class="nav-text">إدارة الطلاب</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="./pages/Data&Reports.html" class="nav-link" data-page="reports">
+                            <i class="fas fa-chart-line nav-icon"></i>
+                            <span class="nav-text">البيانات والتقارير</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="./pages/Attendance_policy.html" class="nav-link" data-page="policy">
+                            <i class="fas fa-clipboard-list nav-icon"></i>
+                            <span class="nav-text">سياسة الحضور</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="./pages/Warnings.html" class="nav-link" data-page="warnings">
+                            <i class="fas fa-exclamation-triangle nav-icon"></i>
+                            <span class="nav-text">التحذيرات</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="./pages/Sync_Data.html" class="nav-link" data-page="sync">
+                            <i class="fas fa-sync-alt nav-icon"></i>
+                            <span class="nav-text">مزامنة البيانات</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="sidebar-divider"></div>
+
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt nav-icon"></i>
+                            <span class="nav-text">تسجيل الخروج</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="menu-toggle d-lg-none" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-wrapper" id="contentWrapper">
+                <!-- Content loads here -->
+            </div>
+        </main>
+    </div>
 
     <script src="main/load_sections.js"></script>
+    <script src="main/sidebar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
 </body>
+
 </html>
