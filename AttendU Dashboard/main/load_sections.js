@@ -3,43 +3,49 @@ let contentWrapper = document.getElementById("contentWrapper");
 function loadSection(tab) {
     // Clear existing content
     contentWrapper.innerHTML = "";
+    fetch(`./pages/${tab}.html`)
+        .then(response => response.text())
+        .then(data => {
+            contentWrapper.innerHTML = data;
+        });
+
     // Load new content based on section
     switch (tab) {
 
         case "overview":
-            contentWrapper.innerHTML = "<h2>نظرة عامة</h2><p>محتوى نظرة عامة...</p>";
+            contentWrapper.innerHTML = './pages/overview.html';
             break;
 
-        case "live-session":
-            contentWrapper.innerHTML = "<h2>الجلسة المباشرة</h2><p>محتوى الجلسة المباشرة...</p>";
+        case "liveSession":
+            contentWrapper.innerHTML = './pages/liveSession.html';
             break;
 
         case "schedules":
-            contentWrapper.innerHTML = "<h2>الجداول الزمنية</h2><p>محتوى الجداول الزمنية...</p>";
+            contentWrapper.innerHTML = './pages/schedules.html';
             break;
 
         case "sessions":
-            contentWrapper.innerHTML = "<h2>الجلسات</h2><p>محتوى الجلسات...</p>";
+            contentWrapper.innerHTML = './pages/sessions.html';
             break;
 
         case "students":
-            contentWrapper.innerHTML = "<h2>الطلاب</h2><p>محتوى الطلاب...</p>";
+            contentWrapper.innerHTML = './pages/students.html';
             break;
         
         case "reports":
-            contentWrapper.innerHTML = "<h2>التقارير</h2><p>محتوى التقارير...</p>";
+            contentWrapper.innerHTML = './pages/reports.html';
             break;
         
         case "policy":
-            contentWrapper.innerHTML = "<h2>السياسة</h2><p>محتوى السياسة...</p>";
+            contentWrapper.innerHTML = './pages/policy.html';
             break;
 
         case "warnings":
-            contentWrapper.innerHTML = "<h2>التحذيرات</h2><p>محتوى التحذيرات...</p>";
+            contentWrapper.innerHTML = './pages/warnings.html';
             break;
         
         case "sync":
-            contentWrapper.innerHTML = "<h2>المزامنة</h2><p>محتوى المزامنة...</p>";
+            contentWrapper.innerHTML = './pages/sync.html';
             break;
 
         default:
