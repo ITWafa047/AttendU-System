@@ -1,5 +1,5 @@
 // Sidebar Toggle Functionality
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const sidebar = document.querySelector('.sidebar');
     const menuToggle = document.getElementById('menuToggle');
     const sidebarToggle = document.getElementById('sidebarToggle');
@@ -7,21 +7,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Mobile menu toggle
     if (menuToggle) {
-        menuToggle.addEventListener('click', function() {
+        menuToggle.addEventListener('click', function () {
             sidebar.classList.toggle('active');
         });
     }
 
     // Sidebar toggle button
     if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', function() {
+        sidebarToggle.addEventListener('click', function () {
             sidebar.classList.toggle('active');
         });
     }
 
     // Close sidebar when a link is clicked on mobile
     navLinks.forEach(link => {
-        link.addEventListener('click', function() {
+        link.addEventListener('click', function () {
             // Remove active class from all links
             navLinks.forEach(l => l.classList.remove('active'));
             // Add active class to clicked link
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Handle window resize
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
         if (window.innerWidth >= 768) {
             sidebar.classList.remove('active');
         }
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Logout functionality
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function(e) {
+        logoutBtn.addEventListener('click', function (e) {
             e.preventDefault();
             if (confirm('هل أنت متأكد من رغبتك في تسجيل الخروج؟')) {
                 // Redirect to login page
@@ -62,3 +62,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Date and Time Display
+let CurrentDate = document.getElementById('current-datetime');
+
+function updateDateTime() {
+    let now = new Date();
+    let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    CurrentDate.textContent = now.toLocaleDateString('ar-EG', options);
+}
+
+setInterval(updateDateTime, 1000);
+updateDateTime();

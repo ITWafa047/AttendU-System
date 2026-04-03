@@ -37,63 +37,72 @@
             <nav class="sidebar-nav">
                 <ul class="nav-list">
                     <li class="nav-item" data-tab="overview">
-                        <a href="#" class="nav-link"  onclick="loadSection('overview')" title="لمحة عامة عن الحضور والغياب والجلسات القادمة">
+                        <a href="#" class="nav-link" onclick="loadSection('overview')"
+                            title="لمحة عامة عن الحضور والغياب والجلسات القادمة">
                             <i class="fas fa-home nav-icon"></i>
                             <span class="nav-text">لمحة عامة</span>
                         </a>
                     </li>
 
                     <li class="nav-item" data-tab="liveSession">
-                        <a href="#" class="nav-link" onclick="loadSection('liveSession')" title="تسجيل الجلسات من خلال webcam">
+                        <a href="#" class="nav-link" onclick="loadSection('liveSession')"
+                            title="تسجيل الجلسات من خلال webcam">
                             <i class="fas fa-video nav-icon"></i>
                             <span class="nav-text">الجلسات المباشرة</span>
                         </a>
                     </li>
 
                     <li class="nav-item" data-tab="schedules">
-                        <a href="#" class="nav-link" onclick="loadSection('schedules')" title="انشاء جداول الجلسات للمقررات الدراسية">
+                        <a href="#" class="nav-link" onclick="loadSection('schedules')"
+                            title="انشاء جداول الجلسات للمقررات الدراسية">
                             <i class="fas fa-calendar-alt nav-icon"></i>
                             <span class="nav-text">جداول الجلسات</span>
                         </a>
                     </li>
 
                     <li class="nav-item" data-tab="sessions">
-                        <a href="#" class="nav-link" onclick="loadSection('sessions')" title="عرض معلومات الجلسات السابقة والحالية">
+                        <a href="#" class="nav-link" onclick="loadSection('sessions')"
+                            title="عرض معلومات الجلسات السابقة والحالية">
                             <i class="fas fa-list nav-icon"></i>
                             <span class="nav-text">معلومات الجلسات</span>
                         </a>
                     </li>
 
                     <li class="nav-item" data-tab="students">
-                        <a href="#" class="nav-link" onclick="loadSection('students')" title="إدارة معلومات الطلاب وتحديثها">
+                        <a href="#" class="nav-link" onclick="loadSection('students')"
+                            title="إدارة معلومات الطلاب وتحديثها">
                             <i class="fas fa-users nav-icon"></i>
                             <span class="nav-text">إدارة الطلاب</span>
                         </a>
                     </li>
 
                     <li class="nav-item" data-tab="reports">
-                        <a href="#" class="nav-link" onclick="loadSection('reports')" title="عرض وتحليل بيانات الحضور والغياب">
+                        <a href="#" class="nav-link" onclick="loadSection('reports')"
+                            title="عرض وتحليل بيانات الحضور والغياب">
                             <i class="fas fa-chart-line nav-icon"></i>
                             <span class="nav-text">البيانات والتقارير</span>
                         </a>
                     </li>
 
                     <li class="nav-item" data-tab="policy">
-                        <a href="#" class="nav-link" onclick="loadSection('policy')" title="تحديد قواعد الحضور والغياب للمقررات الدراسية">
+                        <a href="#" class="nav-link" onclick="loadSection('policy')"
+                            title="تحديد قواعد الحضور والغياب للمقررات الدراسية">
                             <i class="fas fa-clipboard-list nav-icon"></i>
                             <span class="nav-text">سياسة الحضور</span>
                         </a>
                     </li>
 
                     <li class="nav-item" data-tab="warnings">
-                        <a href="#" class="nav-link" onclick="loadSection('warnings')" title="عرض التحذيرات المتعلقة بالحضور والغياب">
+                        <a href="#" class="nav-link" onclick="loadSection('warnings')"
+                            title="عرض التحذيرات المتعلقة بالحضور والغياب">
                             <i class="fas fa-exclamation-triangle nav-icon"></i>
                             <span class="nav-text">التحذيرات</span>
                         </a>
                     </li>
 
                     <li class="nav-item" data-tab="sync">
-                        <a href="#" class="nav-link" onclick="loadSection('sync')" title="مزامنة البيانات مع النظام المركزي للجامعة">
+                        <a href="#" class="nav-link" onclick="loadSection('sync')"
+                            title="مزامنة البيانات مع النظام المركزي للجامعة">
                             <i class="fas fa-sync-alt nav-icon"></i>
                             <span class="nav-text">مزامنة البيانات</span>
                         </a>
@@ -122,12 +131,16 @@
                     </button>
                 </div>
 
-                    <div class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
                     <label for="roleSelect">الدور:</label>
                     <select id="roleSelect" class="form-control">
                         <option value="instructor" selected>عضو هيئة التدريس</option>
                         <option value="admin">مدير النظام</option>
                     </select>
+                </div>
+
+                <div class="datetime">
+                    <span id="current-datetime">.....</span>
                 </div>
             </header>
 

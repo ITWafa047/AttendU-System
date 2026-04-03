@@ -1,16 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
-    
+
     <section id="overview-section">
-        <h2>نظرة عامة</h2>
+        <h1>نظرة عامة</h1>
         <p>هذا هو محتوى النظرة العامة.</p>
+
+        <div class="container statistics">
+
+            <h2 class="p-3">إحصائيات عامة</h2>
+            <div class="row g-5">
+
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            
+                            عدد الجلسات المطلوب تسجيلها اليوم
+                        </div>
+                        <div class="card-body">
+                            <p id="sessions-count">..........</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            إجمالي عدد الطلاب
+                        </div>
+                        <div class="card-body">
+                            <p id="students-count">.......</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            متوسط نسبة الحضور العام
+                        </div>
+                        <div class="card-body">
+                            <p id="attendance-average">......</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            متوسط دقة المودل
+                        </div>
+                        <div class="card-body">
+                            <p id="model-accuracy">......</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            عدد الإنذارات للطلبة
+                        </div>
+                        <div class="card-body">
+                            <p id="warnings-count">.......</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            جودة شبكة السيرفر لمزامنة البيانات
+                        </div>
+                        <div class="card-body">
+                            <p id="network-status">........</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            متوسط نسبة الحضور في المحاضرات
+                        </div>
+                        <div class="card-body">
+                            <p class="lec-average">.......</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            متوسط نسبة الحضور في السكاشن
+                        </div>
+                        <div class="card-body">
+                            <p id="sec-average">........</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </section>
     <script src="js/Overview.js"></script>
 </body>
+
 </html>
