@@ -1,4 +1,9 @@
+// DOM Elements
 let contentWrapper = document.getElementById("contentWrapper");
+let roleSelect = document.getElementById("roleSelect");
+
+const instructorSections = ["liveSession", "sessions"];
+const adminSections = ['overview',"schedules", "students", "reports", "policy", "warnings", "sync"];
 
 function loadSection(tab) {
     // Clear existing content
@@ -53,3 +58,38 @@ function loadSection(tab) {
             break;
     }
 }
+
+function updateNavForRole(role){
+    let allowedSections = [];
+
+    if (role === "admin"){
+        allowedSections = adminSections;
+    }else if (role === "instructor"){
+        allowedSections = instructorSections;
+    }
+
+    let tabs = document.querySelectorAll("[data-tab]");
+
+    tabs.forEach(tab => {
+        const tabName = tab.getAttribute("data-tab");
+
+        if (allowedSections.includes(tabName)){
+            tab.classList.remove("disabled");
+            tab.style.pointerEvents = "auto";
+            tab.style.opacity = "1";
+        }else{
+            tab.classList.add("disabled");
+            tab.style.pointerEvents = "none";
+            tab.style.opacity = "0.5";
+        }
+    });
+}
+
+// Initialize with default role
+updateNavForRole(roleSelect.value);
+
+roleSelect.addEventListener("change", function(){
+    const selectedRole = roleSelect.value;
+    updateNavForRole(selectedRole);
+});
+
