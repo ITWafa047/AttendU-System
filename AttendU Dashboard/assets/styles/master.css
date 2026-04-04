@@ -234,8 +234,8 @@ header {
 }
 
 .statistics .row>div:nth-child(6) .card {
-    background: rgb(128, 0, 128);
-    background: linear-gradient(159deg, rgba(128, 0, 128, 1) 0%, rgba(255, 0, 255, 1) 100%);
+    background-color: #bfdd50;
+    background-image: linear-gradient(314deg, #bfdd50 0%, #BAB86C 74%);
     color: #fff;
 }
 
@@ -246,8 +246,8 @@ header {
 }
 
 .statistics .row>div:nth-child(8) .card {
-background: rgb(8,146,208);
-background: linear-gradient(159deg, rgba(8,146,208,1) 0%, rgba(75,0,130,1) 100%);
+    background: rgb(8, 146, 208);
+    background: linear-gradient(159deg, rgba(8, 146, 208, 1) 0%, rgba(75, 0, 130, 1) 100%);
     color: #fff;
 }
 
@@ -350,7 +350,7 @@ background: linear-gradient(159deg, rgba(8,146,208,1) 0%, rgba(75,0,130,1) 100%)
         flex-direction: column;
     }
 
-    .datetime{
+    .datetime {
         display: none;
     }
 }
