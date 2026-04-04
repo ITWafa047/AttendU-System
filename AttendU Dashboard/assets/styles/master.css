@@ -173,8 +173,14 @@ header {
     align-items: center;
     justify-content: space-between;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    position: relative;
 }
 
+.datetime{
+    position: absolute;
+    top: -42px;
+    right: 0;
+}
 .header-left {
     display: flex;
     align-items: center;
@@ -363,5 +369,11 @@ header {
 @media (min-width: 1200px) {
     .d-lg-none {
         display: none !important;
+    }
+}
+
+@media (min-width:769px) and (max-width:991px){
+    .menu-toggle{
+        display: none;
     }
 }
