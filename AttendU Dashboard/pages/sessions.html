@@ -1,17 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
-    
+
     <section id="sessions-section">
-        <h2>معلومات الجلسات</h2>
-        <p>هذا هو محتوى معلومات الجلسات.</p>
+
+        <div class="shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+            <h2>معلومات الجلسات</h2>
+            <p>هذا هو محتوى معلومات الجلسات.</p>
+        </div>
+
+        <div class="container">
+            <div class="filters">
+                <div class="days" id="days-filter">
+                    <button class="btn btn-outline-primary active" data-day="all">الكل</button>
+                    <button class="btn btn-outline-primary" data-day="saturday">السبت</button>
+                    <button class="btn btn-outline-primary" data-day="sunday">الأحد</button>
+                    <button class="btn btn-outline-primary" data-day="monday">الإتنين</button>
+                    <button class="btn btn-outline-primary" data-day="tuesday">الثلاثاء</button>
+                    <button class="btn btn-outline-primary" data-day="wednesday">الأربعاء</button>
+                    <button class="btn btn-outline-primary" data-day="thursday">الخميس</button>
+                </div>
+
+                <div class="sessions-types" id="type-filter">
+                    <button class="btn btn-outline-secondary active" data-type="all">الكل</button>
+                    <button class="btn btn-outline-secondary" data-type="lecture">محاضرة</button>
+                    <button class="btn btn-outline-secondary" data-type="section">سكشن</button>
+                    <button class="btn btn-outline-secondary" data-type="lab">معمل</button>
+                </div>
+
+                <div class="search p-3" id="search-filter">
+                    <input type="search" placeholder="ابحث عن اسم المحاضر او المعيد" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row sessions-table">
+            <div class="col">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">م</th>
+                            <th scope="col">اليوم</th>
+                            <th scope="col">نوع الجلسة</th>
+                            <th scope="col">اسم المقرر</th>
+                            <th scope="col">اسم المحاضر/المعيد</th>
+                            <th scope="col">وقت بدء الجلسة</th>
+                            <th scope="col">وقت انتهاء الجلسة</th>
+                            <th scope="col">المكان</th>
+                            <th scope="col">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sessions-table-body">
+                        <!-- سيتم ملء هذا الجزء ديناميكيًا باستخدام JavaScript -->
+                        <!-- example row -->
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>السبت</td>
+                            <td>محاضرة</td>
+                            <td>الرياضيات</td>
+                            <td>أحمد محمد</td>
+                            <td>08:00 AM</td>
+                            <td>10:00 AM</td>
+                            <td>المبنى الرئيسي - القاعة 101</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-dark"  data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">إبدا تسجيل</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>الأحد</td>
+                            <td>سكشن</td>
+                            <td>الفيزياء</td>
+                            <td>سارة علي</td>
+                            <td>10:30 AM</td>
+                            <td>12:00 PM</td>
+                            <td>المبنى العلمي - القاعة 202</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-dark" disabled data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">إبدا تسجيل</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">مفتاح الجلسة</h1>
+                    </div>
+                    <div class="modal-body">
+                        <p>يرجى إدخال مفتاح الجلسة لبدء التسجيل:</p>
+                        <input type="text" class="form-control" placeholder="مفتاح الجلسة" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">إلغاء</button>
+                        <button type="button" class="btn btn-success">بدء التسجيل</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </section>
-    
+
     <script src="js/sessions_info.js"></script>
 </body>
+
 </html>

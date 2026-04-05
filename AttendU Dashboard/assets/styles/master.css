@@ -48,13 +48,14 @@ header {
     background: var(--sidebar-bg);
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.08);
     overflow-y: auto;
-    border-right: 1px solid var(--border-color);
+    border-left: 1px solid var(--border-color);
     transition: var(--transition);
     position: fixed;
     height: 100vh;
     right: 0;
     display: flex;
     flex-direction: column;
+    transition: 0.3s ease;
 }
 
 .sidebar-header {
@@ -176,11 +177,12 @@ header {
     position: relative;
 }
 
-.datetime{
+.datetime {
     position: absolute;
     top: -42px;
     right: 0;
 }
+
 .header-left {
     display: flex;
     align-items: center;
@@ -372,8 +374,34 @@ header {
     }
 }
 
-@media (min-width:769px) and (max-width:991px){
-    .menu-toggle{
+@media (min-width:769px) and (max-width:991px) {
+    .menu-toggle {
         display: none;
     }
+}
+
+
+/* sessions info section */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.days .btn,
+.sessions-types .btn {
+    min-width: 100px;
+    margin: 5px;
+}
+
+.filters .search {
+    flex: 1;
+    max-width: 100%;
+}
+
+.sessions-table {
+    overflow-x: auto;
+    
 }
