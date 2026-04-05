@@ -15,9 +15,63 @@
             <h2>الجلسات المباشرة</h2>
             <p>هذا هو محتوى الجلسات المباشرة.</p>
         </div>
+
+        <div class="container">
+            <div class="camera-section">
+                <div id="webcam" class="camera-placeholder">
+                    <div class="live-indicator">مباشر</div>
+                    <button id="startCamBtn" class="btn btn-outline-primary text-white">تشغيل الكاميرا</button>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="header-controls">
+                    <div class="session-info">
+                        <p><strong>اسم المادة:</strong> ------------</p>
+                        <p><strong>نوع الجلسة:</strong> ------------</p>
+                    </div>
+                    <div class="time-controls">
+                        <div class="timer">00:00:00</div>
+                        <button class="btn btn-outline-danger">إنهاء الجلسة</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم الطالب</th>
+                                <th>حالة القيد</th>
+                                <th>حالة الحضور</th>
+                                <th>دقة التسجيل</th>
+                                <th>تاريخ التسجيل</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>أحمد محمد</td>
+                                <td>مسجل</td>
+                                <td>حاضر</td>
+                                <td>95%</td>
+                                <td>2024-06-15 09:00:00</td>
+                            </tr>
+                            <tr>
+                                <td>سارة علي</td>
+                                <td>مسجل</td>
+                                <td>غائب</td>
+                                <td>0%</td>
+                                <td>2024-06-15 09:00:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </section>
 
-    <script src="js/live_sessions.js"></script>
+    <script src="./js/live_sessions.js"></script>
+
 </body>
 
 </html>

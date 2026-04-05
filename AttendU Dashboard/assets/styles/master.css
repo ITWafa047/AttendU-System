@@ -16,6 +16,21 @@
     --text-light: #7f8c8d;
     --border-color: #e0e0e0;
     --transition: all 0.3s ease;
+
+    /* live session styles colors */
+    --bg: #f0ede8;
+    --panel-bg: #ffffff;
+    --cam-bg: #d9d4cc;
+    --accent: #1a1a1a;
+    --accent2: #c0392b;
+    --border: #c8c2b8;
+    --text-main: #1a1a1a;
+    --text-muted: #7a7168;
+    --header-bg: #1a1a1a;
+    --row-alt: #f8f5f1;
+    --shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+    --radius: 14px;
+    /* live session styles colors */
 }
 
 * {
@@ -403,5 +418,138 @@ header {
 
 .sessions-table {
     overflow-x: auto;
-    
+}
+
+/* live session section */
+/* قسم الكاميرا */
+.camera-section {
+    flex: 1.5; /* يشغل مساحة أكبر */
+    background-color: #2c3e50;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.camera-placeholder {
+    width: 100%;
+    height: 512px;
+    background-color: #34495e;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    color: #ecf0f1;
+    font-size: 2rem;
+    border: 2px dashed #7f8c8d;
+}
+
+.live-indicator {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #e74c3c;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    animation: blink 1.5s infinite;
+}
+
+/* قسم المعلومات والجدول */
+.info-section {
+    flex: 1;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.05);
+}
+
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 20px;
+}
+
+.session-info p {
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.time-controls {
+    text-align: left;
+}
+
+.timer {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.end-session-btn {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.end-session-btn:hover {
+    background-color: #e74c3c;
+}
+
+/* تنسيق الجدول */
+.table-container {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: right;
+}
+
+th {
+    background-color: #f8f9fa;
+    color: #7f8c8d;
+    padding: 12px;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #eee;
+}
+
+td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #f1f1f1;
+    color: #444;
+}
+
+.status.active {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* للموبايل */
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+    }
+    .camera-section {
+        flex: none;
+        height: 300px;
+    }
 }
