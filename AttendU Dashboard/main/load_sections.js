@@ -2,8 +2,8 @@
 let contentWrapper = document.getElementById("contentWrapper");
 let roleSelect = document.getElementById("roleSelect");
 
-const instructorSections = ["liveSession", "sessions"];
-const adminSections = ['overview', "schedules", "students", "reports", "policy", "warnings", "sync"];
+const instructorSections = ["liveSession", "sessions","sync"];
+const adminSections = ['overview', "schedules", "students", "reports", "policy", "warnings"];
 
 function loadSection(tab) {
     // Clear existing content
