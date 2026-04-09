@@ -1,15 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
-    
+
     <section id="reports-section">
-        <h2>التقارير</h2>
-        <p>هذا هو محتوى التقارير.</p>
+        <div class="shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+            <h2>التقارير</h2>
+            <p>هذا هو محتوى التقارير.</p>
+        </div>
+
+        <div class="container">
+
+            <div class="form">
+                <fieldset class="border p-4">
+                    <legend class="form-label">إعدادات التقرير</legend>
+                    <div class="course-name my-3">
+                        <label for="course-name-input" class="form-label">اسم المقرر:</label>
+                        <input type="text" id="course-name-input" class="form-control" placeholder="أدخل اسم المقرر" />
+                    </div>
+
+                    <div class="session-type my-3">
+                        <label for="session-type-select" class="form-label">نوع الجلسة:</label>
+                        <select id="session-type-select" class="form-select">
+                            <option selected>اختر نوع الجلسة</option>
+                            <option value="lecture">محاضرة</option>
+                            <option value="section">سكشن</option>
+                            <option value="lab">معمل</option>
+                        </select>
+                    </div>
+
+                    <div class="instructor-name my-3">
+                        <label for="instructor-name-input" class="form-label">اسم المحاضر / المعيد:</label>
+                        <input type="text" id="instructor-name-input" class="form-control"
+                            placeholder="أدخل اسم المحاضر / المعيد" />
+                    </div>
+
+                    <div class="class-type my-3">
+                        <label for="class-type-select" class="form-label">الفرقة الدراسية:</label>
+                        <select id="class-type-select" class="form-select">
+                            <option selected>اختر اسم الفرقة الدراسية</option>
+                            <option value="oneYear">الفرقة الاولي</option>
+                            <option value="twoYear">الفرقة الثانية</option>
+                            <option value="threeYear">الفرقة الثالثة</option>
+                            <option value="fourYear">الفرقة الرابعة</option>
+                        </select>
+                    </div>
+
+                    <div class="save-settings d-flex justify-content-center align-items-center mt-4">
+                        <button class="btn btn-primary">إعداد تقرير</button>
+                    </div>
+
+                </fieldset>
+            </div>
+
+            <div class="row sessions-table my-5">
+
+                <div class="col">
+                    <div class="d-flex justify-content-end gap-3 align-items-center mb-3">
+                        <div class="download-report">
+                            <button class="btn btn-outline-primary my-2">تحميل التقرير <i class="fas fa-download"></i></button>
+                        </div>
+                        <button class="btn btn-outline-success my-2">طباعة التقرير <i class="fas fa-print"></i></button>
+                    </div>
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">م</th>
+                                <th scope="col">كود الطالب</th>
+                                <th scope="col">اسم الطالب</th>
+                                <th scope="col">حالة القيد</th>
+                                <th scope="col">حاضر (عدد المرات)</th>
+                                <th scope="col">متأخر (عدد المرات)</th>
+                                <th scope="col">غائب (عدد المرات)</th>
+                                <th scope="col">الإجمالي</th>
+                                <th scope="col">نسبة الحضور</th>
+                                <th scope="col">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sessions-table-body">
+                            <!-- سيتم ملء هذا الجزء ديناميكيًا باستخدام JavaScript -->
+                            <!-- example row -->
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>123456</td>
+                                <td>أحمد محمد</td>
+                                <td>قيد فعال</td>
+                                <td>10</td>
+                                <td>2</td>
+                                <td>3</td>
+                                <td>15</td>
+                                <td>75%</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info">عرض التفاصيل</button>
+                                    <button class="btn btn-sm btn-danger">إرسال تحذير</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
     </section>
 </body>
+
 </html>

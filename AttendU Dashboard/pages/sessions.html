@@ -19,7 +19,7 @@
         <div class="container">
             <div class="filters">
                 <div class="days" id="days-filter">
-                    <button class="btn btn-outline-primary active" data-day="all">الكل</button>
+                    <button class="btn btn-outline-primary active" data-day="today">اليوم</button>
                     <button class="btn btn-outline-primary" data-day="saturday">السبت</button>
                     <button class="btn btn-outline-primary" data-day="sunday">الأحد</button>
                     <button class="btn btn-outline-primary" data-day="monday">الإتنين</button>
@@ -39,16 +39,17 @@
                     <input type="search" placeholder="ابحث عن اسم المحاضر او المعيد" class="form-control" />
                 </div>
             </div>
-        </div>
 
-        <div class="row sessions-table">
+
+                    <div class="row sessions-table">
             <div class="col">
                 <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
                             <th scope="col">م</th>
-                            <th scope="col">اليوم</th>
+                            <th scope="col">تاريخ تسجيل الحضور</th>
                             <th scope="col">نوع الجلسة</th>
+                            <th scope="col">الفرقة الدراسية</th>
                             <th scope="col">اسم المقرر</th>
                             <th scope="col">اسم المحاضر/المعيد</th>
                             <th scope="col">وقت بدء الجلسة</th>
@@ -62,8 +63,9 @@
                         <!-- example row -->
                         <tr>
                             <th scope="row">1</th>
-                            <td>السبت</td>
+                            <td>2024-06-01</td>
                             <td>محاضرة</td>
+                            <td>الفرقة الأولى</td>
                             <td>الرياضيات</td>
                             <td>أحمد محمد</td>
                             <td>08:00 AM</td>
@@ -76,8 +78,9 @@
                         </tr>
                         <tr>
                             <th scope="row">2</th>
-                            <td>الأحد</td>
+                            <td>2024-06-02</td>
                             <td>سكشن</td>
+                            <td>الفرقة الثانية</td>
                             <td>الفيزياء</td>
                             <td>سارة علي</td>
                             <td>10:30 AM</td>
@@ -92,24 +95,7 @@
                 </table>
             </div>
         </div>
-
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">مفتاح الجلسة</h1>
-                    </div>
-                    <div class="modal-body">
-                        <p>يرجى إدخال مفتاح الجلسة لبدء التسجيل:</p>
-                        <input type="text" class="form-control" placeholder="مفتاح الجلسة" />
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">إلغاء</button>
-                        <button type="button" class="btn btn-success">بدء التسجيل</button>
-                    </div>
-                </div>
-            </div>
+        
         </div>
 
     </section>

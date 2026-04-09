@@ -553,6 +553,8 @@ td {
     font-weight: bold;
 }
 
+/* sync data */
+
 @keyframes blink {
     0% {
         opacity: 1;

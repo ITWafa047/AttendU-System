@@ -15,6 +15,136 @@
             <p>هذا هو محتوى المزامنة.</p>
         </div>
 
+        <div class="container">
+
+
+
+            <div class="row g-5">
+                <div class="col-4">
+                    <div class="card server-status">
+                        <div class="card-header">
+                            جودة شبكة السيرفر لمزامنة البيانات
+                        </div>
+                        <div class="card-body">
+                            <p id="network-status">........</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="card sync-success">
+                        <div class="card-header">
+                            عدد المزامات الناجحة
+                        </div>
+                        <div class="card-body">
+                            <p id="sync-success">........</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="card sync-failed">
+                        <div class="card-header">
+                            عدد المزامات الفاشلة
+                        </div>
+                        <div class="card-body">
+                            <p id="sync-failed">........</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filters mt-4">
+                <div class="container">
+                    <h2>فلترة النتائج</h2>
+                </div>
+
+                <div class="sync" id="sync-filter">
+                    <button class="btn btn-outline-primary active" sync-status="all">الكل</button>
+                    <button class="btn btn-outline-primary" sync-status="all">مزامنة ناجحة</button>
+                    <button class="btn btn-outline-primary" sync-status-day="all">مزامنة فاشلة</button>
+                </div>
+
+                <div class="attendance-types" id="type-filter">
+                    <button class="btn btn-outline-secondary active" data-type="all">الكل</button>
+                    <button class="btn btn-outline-secondary" data-type="lecture">حاضر</button>
+                    <button class="btn btn-outline-secondary" data-type="section">متأخر</button>
+                    <button class="btn btn-outline-secondary" data-type="lab">غائب</button>
+                </div>
+
+                <div class="search p-3" id="search-filter">
+                    <input type="search" placeholder="ابحث عن اسم الطالب" class="form-control" />
+                </div>
+            </div>
+
+            <div class="row sessions-table">
+                <div class="info">
+                    <div class="course-name">
+                        <p>اسم المقرر: <span id="course-name"></span></p>
+                    </div>
+                    <div class="session-type">
+                        <p>نوع الجلسة: <span id="session-type"></span></p>
+                    </div>
+                    <div class="group-name">
+                        <p>الفرقة الدراسية: <span id="group-name"></span></p>
+                    </div>
+                    <div class="student-count">
+                        <p>عدد الطلاب: <span id="student-count"></span></p>
+                    </div>
+                </div>
+                <div class="col">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">م</th>
+                                <th scope="col">اسم الطالب</th>
+                                <th scope="col">حالة الحضور</th>
+                                <th scope="col">دقة المودل</th>
+                                <th scope="col">حالة المزامنة</th>
+                                <th scope="col">تاريخ ووقت تسجيل الحضور</th>
+                                <th scope="col">حالة القيد</th>
+                                <th scope="col">الفرقةالدراسية</th>
+                                <th scope="col">عدد محاولات المزامنة</th>
+                                <th scope="col">تاريخ ووقت المزامنة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sessions-table-body">
+                            <!-- سيتم ملء هذا الجزء ديناميكيًا باستخدام JavaScript -->
+                            <!-- example row -->
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>أحمد محمد</td>
+                                <td>حاضر</td>
+                                <td>95%</td>
+                                <td>ناجحة</td>
+                                <td>2024-06-01 09:00:00</td>
+                                <td>مستجد</td>
+                                <td>الفرقة الأولى</td>
+                                <td>2</td>
+                                <td>2024-06-01 09:05:00</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">2</th>
+                                <td>سارة علي</td>
+                                <td>متأخر</td>
+                                <td>80%</td>
+                                <td>فاشلة</td>
+                                <td>2024-06-01 09:10:00</td>
+                                <td>مستجد</td>
+                                <td>الفرقة الأولى</td>
+                                <td>3</td>
+                                <td>2024-06-01 09:15:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sync-actions mt-3 d-flex justify-content-center align-items-center">
+                    <button class="btn btn-outline-primary">مزامنة البيانات</button>
+                </div>
+            </div>
+
+        </div>
     </section>
 </body>
 

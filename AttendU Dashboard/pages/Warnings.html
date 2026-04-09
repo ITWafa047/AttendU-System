@@ -1,17 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
-    
+
     <section id="warnings-section">
-        <h2>التحذيرات</h2>
-        <p>هذا هو محتوى التحذيرات.</p>
+        <div class="shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+            <h2>التحذيرات</h2>
+            <p>هذا هو محتوى التحذيرات.</p>
+        </div>
+
+        <div class="container">
+            <div class="form">
+                <div class="search">
+                    <input type="search" class="form-control" id="search-input" placeholder="ابحث عن اسم الطالب..." />
+                </div>
+                <div class="row sessions-table my-5">
+                    <div class="col">
+                        <div class="d-flex justify-content-end gap-3 align-items-center mb-3">
+                            <div class="download-report">
+                                <button class="btn btn-outline-primary my-2">تحميل التقرير <i
+                                        class="fas fa-download"></i></button>
+                            </div>
+                            <button class="btn btn-outline-success my-2">طباعة التقرير <i
+                                    class="fas fa-print"></i></button>
+                        </div>
+                    </div>
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">م</th>
+                                <th scope="col">كود الطالب</th>
+                                <th scope="col">اسم الطالب</th>
+                                <th scope="col">الفرقة الدراسية</th>
+                                <th scope="col">حالة القيد</th>
+                                <th scope="col">نوع التحذير</th>
+                                <th scope="col">سبب التحذير</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sessions-table-body">
+                            <!-- سيتم ملء هذا الجزء ديناميكيًا باستخدام JavaScript -->
+                            <!-- example row -->
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>123456</td>
+                                <td>أحمد محمد</td>
+                                <td>الفرقة الأولى</td>
+                                <td>قيد نشط</td>
+                                <td>تحذير أول</td>
+                                <td>تأخر في الحضور 3 مرات</td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </section>
-    
+
 
 </body>
+
 </html>
