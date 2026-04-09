@@ -17,11 +17,14 @@
         </div>
 
         <div class="container">
+
             <div class="camera-section">
-                <div id="webcam" class="camera-placeholder">
+                <div class="camera-placeholder">
+                    <video id="webcam" autoplay playsinline></video>
                     <div class="live-indicator">مباشر</div>
-                    <button id="startCamBtn" class="btn btn-outline-primary text-white">تشغيل الكاميرا</button>
                 </div>
+                <button id="btnCamera" class="btn btn-success text-white mx-3">تشغيل
+                    الكاميرا</button>
             </div>
 
             <div class="info-section">
@@ -69,9 +72,6 @@
         </div>
 
     </section>
-
-    <script src="./js/live_sessions.js"></script>
-
 </body>
 
 </html>

@@ -1,62 +1,31 @@
 // DOM Elements
 let contentWrapper = document.getElementById("contentWrapper");
 let roleSelect = document.getElementById("roleSelect");
-
-const instructorSections = ["liveSession", "sessions","sync"];
+const instructorSections = ["liveSession", "sessions", "sync"];
 const adminSections = ['overview', "schedules", "students", "reports", "policy", "warnings"];
 
 function loadSection(tab) {
     // Clear existing content
     contentWrapper.innerHTML = "";
+
     fetch(`./pages/${tab}.html`)
         .then(response => response.text())
-        .then(data => {
-            contentWrapper.innerHTML = data;
+        .then(html => {
+            contentWrapper.innerHTML = html;
+            // live session
+            if (tab === "liveSession") {
+                const videoCam = document.getElementById("webcam");
+                let btnCamera = document.getElementById("btnCamera");
+                if (btnCamera) {
+                    const freahBtn = btnCamera.cloneNode(true);
+                    btnCamera.replaceWith(freahBtn);
+                    freahBtn.addEventListener('click', () => toggleCamera(freahBtn, videoCam));
+                }
+            }
+        })
+        .catch(() => {
+            contentWrapper.innerHTML = "<h2>تعذر تحميل الصفحة</h2><p>الرجاء المحاولة مرة أخرى.</p>";
         });
-
-    // Load new content based on section
-    switch (tab) {
-
-        case "overview":
-            contentWrapper.innerHTML = './pages/overview.html';
-            break;
-
-        case "liveSession":
-            contentWrapper.innerHTML = './pages/liveSession.html';
-            break;
-
-        case "schedules":
-            contentWrapper.innerHTML = './pages/schedules.html';
-            break;
-
-        case "sessions":
-            contentWrapper.innerHTML = './pages/sessions.html';
-            break;
-
-        case "students":
-            contentWrapper.innerHTML = './pages/students.html';
-            break;
-
-        case "reports":
-            contentWrapper.innerHTML = './pages/reports.html';
-            break;
-
-        case "policy":
-            contentWrapper.innerHTML = './pages/policy.html';
-            break;
-
-        case "warnings":
-            contentWrapper.innerHTML = './pages/warnings.html';
-            break;
-
-        case "sync":
-            contentWrapper.innerHTML = './pages/sync.html';
-            break;
-
-        default:
-            contentWrapper.innerHTML = "<h2>الصفحة غير موجودة</h2><p>الرجاء اختيار قسم من القائمة.</p>";
-            break;
-    }
 }
 
 function updateNavForRole(role) {
@@ -84,6 +53,8 @@ function updateNavForRole(role) {
             tab.style.opacity = "0.5";
         }
     });
+
+    navLinks.forEach(link => link.classList.remove("active"));
 }
 
 // Initialize with default role

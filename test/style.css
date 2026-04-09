@@ -1,7 +1,7 @@
 body {
     text-align: center;
     font-family: Arial;
-    background: #000000;
+    background: #000000a3;
     color: white;
 }
 
@@ -13,6 +13,8 @@ video {
     margin-top: 20px;
     border: 4px solid #00ffcc;
     border-radius: 10px;
+    background: #0051ff;
+    /* width: 100%; */
 }
 .btn {
     margin-top: 20px;
