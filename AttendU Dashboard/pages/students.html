@@ -13,6 +13,111 @@
             <h2>إدارة الطلاب</h2>
             <p>هذا هو محتوى إدارة الطلاب.</p>
         </div>
+
+        <div class="container">
+            <div class="form">
+                <fieldset class="border p-4">
+                    <legend class="form-label">تسجيل طالب جديد</legend>
+
+                    <div class="course-name my-3">
+                        <label for="course-name-input" class="form-label">كود الطالب:</label>
+                        <input type="text" id="course-name-input" class="form-control" placeholder="أدخل كود الطالب" />
+                    </div>
+
+                    <div class="course-name my-3">
+                        <label for="course-name-input" class="form-label">اسم الطالب بالكامل:</label>
+                        <input type="text" id="course-name-input" class="form-control"
+                            placeholder="أدخل اسم الطالب بالكامل" />
+                    </div>
+
+                    <div class="course-name my-3">
+                        <label for="course-name-input" class="form-label">الايميل الجامعي:</label>
+                        <input type="email" id="course-name-input" class="form-control"
+                            placeholder="أدخل الايميل الجامعي" />
+                    </div>
+
+                    <div class="course-name my-3">
+                        <label for="course-name-input" class="form-label">رقم الهاتف:</label>
+                        <input type="text" id="course-name-input" class="form-control" placeholder="أدخل رقم الهاتف" />
+                    </div>
+
+                    <div class="gender-type my-3">
+                        <label for="gender-type-select" class="form-label">الجنس:</label>
+                        <select id="gender-type-select" class="form-select">
+                            <option selected>اختر الجنس</option>
+                            <option value="male">ذكر</option>
+                            <option value="female">أنثى</option>
+                        </select>
+                    </div>
+
+                    <div class="national-id my-3">
+                        <label for="national-id" class="form-label">الرقم القومي:</label>
+                        <input type="text" id="national-id" class="form-control" placeholder="أدخل الرقم القومي" />
+                    </div>
+                    <div class="class-type my-3">
+                        <label for="class-type-select" class="form-label">الفرقة الدراسية:</label>
+                        <select id="class-type-select" class="form-select">
+                            <option selected>اختر اسم الفرقة الدراسية</option>
+                            <option value="oneYear">الفرقة الاولي</option>
+                            <option value="twoYear">الفرقة الثانية</option>
+                            <option value="threeYear">الفرقة الثالثة</option>
+                            <option value="fourYear">الفرقة الرابعة</option>
+                        </select>
+                    </div>
+
+                    <div class="upload-photo">
+                        <label for="photo-upload" class="form-label">رفع صورة الطالب:</label>
+                        <input type="file" id="photo-upload" class="form-control" accept="image/*" />
+                    </div>
+
+                    <div class="save-settings d-flex justify-content-center align-items-center mt-4">
+                        <button class="btn btn-primary">تسجيل طالب جديد</button>
+                    </div>
+                </fieldset>
+
+                <div class="row sessions-table mt-5">
+                    <h2>قائمة الطلاب المسجلين</h2>
+                    <div class="col">
+                        <div class="search p-3" id="search-filter">
+                            <input type="search" placeholder="ابحث عن كود الطالب" class="form-control" />
+                        </div>
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>م</th>
+                                    <th>كود الطالب</th>
+                                    <th>اسم الطالب</th>
+                                    <th>الايميل</th>
+                                    <th>رقم الهاتف</th>
+                                    <th>الجنس</th>
+                                    <th>الرقم القومي</th>
+                                    <th>الفرقة الدراسية</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>123456</td>
+                                    <td>محمد أحمد علي</td>
+                                    <td>muhammad@example.com</td>
+                                    <td>01012345678</td>
+                                    <td>ذكر</td>
+                                    <td>12345678901234</td>
+                                    <td>الفرقة الاولي</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">بروفايل</button>
+                                        <button class="btn btn-sm btn-outline-danger">حذف</button>
+                                        <button class="btn btn-sm btn-outline-success">تسجيل مقرر جديد</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </section>
 
 </body>

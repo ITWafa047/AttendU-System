@@ -133,9 +133,9 @@
 
                 <div class="d-flex align-items-center gap-2">
                     <label for="roleSelect">الدور:</label>
-                    <select id="roleSelect" class="form-control">
-                        <option value="instructor">عضو هيئة التدريس</option>
-                        <option value="admin" selected>مدير النظام</option>
+                    <select id="roleSelect" class="form-control" disabled>
+                        <option value="instructor" selected>عضو هيئة التدريس</option>
+                        <option value="admin">مدير النظام</option>
                     </select>
                 </div>
 
@@ -153,6 +153,7 @@
     <!-- Basic Dashboard JS -->
     <script src="./main/load_sections.js"></script>
     <script src="./main/sidebar.js"></script>
+    <script src="./main/authentication.js"></script>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"

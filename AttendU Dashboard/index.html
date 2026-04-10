@@ -23,20 +23,30 @@
 <body>
     <header class="d-flex justify-content-center align-items-center">
         <i class="fa-solid fa-graduation-cap display-1 text-danger ms-2"></i>
-        <h1 class="fw-bold">بوابة أعضاء هيئة التدريس</h1>    
+        <h1 class="fw-bold">AttendU System</h1>    
     </header>
 
         <section class="container d-flex flex-column justify-content-center align-items-center" style="height: 80vh;">
             <div class="card p-4 shadow" style="width: 400px;">
                 <h2 class="text-center mb-4">تسجيل الدخول</h2>
                 <form id="loginForm">
+
                 <div class="mb-3">
                     <label for="username" class="form-label">اسم المستخدم</label>
                     <input type="text" class="form-control" id="username" placeholder="أدخل اسم المستخدم" required>
                 </div>
+
                 <div class="mb-3">
                     <label for="password" class="form-label">كلمة المرور</label>
                     <input type="password" class="form-control" id="password" placeholder="أدخل كلمة المرور" required>
+                </div>
+
+                <div class="mb-3">
+                        <label for="inputRole" class="form-label">الدور</label>
+                        <select name="role" id="inputRole" class="form-control">
+                            <option value="instructor">عضو هيئة التدريس</option>
+                            <option value="admin">مدير النظام</option>
+                        </select>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">تسجيل الدخول</button>
             </div>
