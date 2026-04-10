@@ -1,18 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
-    
+
     <section id="schedules-section">
         <div class="shadow-sm p-3 mb-5 bg-body-tertiary rounded">
             <h2>الجداول الزمنية</h2>
             <p>هذا هو محتوى الجداول الزمنية.</p>
         </div>
+
+        <div class="container">
+            <div class="form">
+                <fieldset class="border p-4">
+                    <legend class="form-label">إنشاء جداول الجلسات</legend>
+                    <div class="course-name my-3">
+                        <label for="course-name-input" class="form-label">اسم المقرر:</label>
+                        <input type="text" id="course-name-input" class="form-control" placeholder="أدخل اسم المقرر" />
+                    </div>
+
+                    <div class="session-type my-3">
+                        <label for="session-type-select" class="form-label">نوع الجلسة:</label>
+                        <select id="session-type-select" class="form-select">
+                            <option selected>اختر نوع الجلسة</option>
+                            <option value="lecture">محاضرة</option>
+                            <option value="section">سكشن</option>
+                            <option value="lab">معمل</option>
+                        </select>
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="day my-3">
+                                <label for="day-select" class="form-label">اليوم:</label>
+                                <select id="day-select" class="form-select">
+                                    <option selected>اختر اليوم</option>
+                                    <option value="saturday">السبت</option>
+                                    <option value="sunday">الأحد</option>
+                                    <option value="monday">الاثنين</option>
+                                    <option value="tuesday">الثلاثاء</option>
+                                    <option value="wednesday">الأربعاء</option>
+                                    <option value="thursday">الخميس</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-3">
+                            <div class="start-time my-3">
+                                <label for="start-time-input" class="form-label">وقت بدء الجلسة:</label>
+                                <input type="time" id="start-time-input" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-3">
+                            <div class="end-time my-3">
+                                <label for="end-time-input" class="form-label">وقت نهاية الجلسة:</label>
+                                <input type="time" id="end-time-input" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-3">
+                            <div class="location my-3">
+                                <label for="location-input" class="form-label">المكان:</label>
+                                <input type="text" id="location-input" class="form-control" placeholder="أدخل المكان" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instructor-name my-3">
+                        <label for="instructor-name-input" class="form-label">اسم المحاضر / المعيد:</label>
+                        <input type="text" id="instructor-name-input" class="form-control"
+                            placeholder="أدخل اسم المحاضر / المعيد" />
+                    </div>
+
+                    <div class="class-type my-3">
+                        <label for="class-type-select" class="form-label">الفرقة الدراسية:</label>
+                        <select id="class-type-select" class="form-select">
+                            <option selected>اختر اسم الفرقة الدراسية</option>
+                            <option value="oneYear">الفرقة الاولي</option>
+                            <option value="twoYear">الفرقة الثانية</option>
+                            <option value="threeYear">الفرقة الثالثة</option>
+                            <option value="fourYear">الفرقة الرابعة</option>
+                        </select>
+                    </div>
+
+                    <div class="save-settings d-flex justify-content-center align-items-center mt-4">
+                        <button class="btn btn-primary">حفظ الإعدادات</button>
+                    </div>
+
+                </fieldset>
+            </div>
+
+            <div class="filters my-5">
+                <div class="days" id="days-filter">
+                    <button class="btn btn-outline-primary active" data-day="today">اليوم</button>
+                    <button class="btn btn-outline-primary" data-day="saturday">السبت</button>
+                    <button class="btn btn-outline-primary" data-day="sunday">الأحد</button>
+                    <button class="btn btn-outline-primary" data-day="monday">الإتنين</button>
+                    <button class="btn btn-outline-primary" data-day="tuesday">الثلاثاء</button>
+                    <button class="btn btn-outline-primary" data-day="wednesday">الأربعاء</button>
+                    <button class="btn btn-outline-primary" data-day="thursday">الخميس</button>
+                </div>
+
+                <div class="sessions-types" id="type-filter">
+                    <button class="btn btn-outline-secondary active" data-type="all">الكل</button>
+                    <button class="btn btn-outline-secondary" data-type="lecture">محاضرة</button>
+                    <button class="btn btn-outline-secondary" data-type="section">سكشن</button>
+                    <button class="btn btn-outline-secondary" data-type="lab">معمل</button>
+                </div>
+
+                <div class="search p-3" id="search-filter">
+                    <input type="search" placeholder="ابحث عن اسم المحاضر او المعيد" class="form-control" />
+                </div>
+            </div>
+
+            <div class="row sessions-table">
+                <div class="col">
+
+                    <div class="d-flex justify-content-end gap-3 align-items-center mb-3">
+                        <div class="download-report">
+                            <button class="btn btn-outline-primary my-2">تحميل الجدول <i
+                                    class="fas fa-download"></i></button>
+                        </div>
+                        <button class="btn btn-outline-success my-2">طباعة الجدول <i class="fas fa-print"></i></button>
+                    </div>
+
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">م</th>
+                                <th scope="col">تاريخ تسجيل الحضور</th>
+                                <th scope="col">نوع الجلسة</th>
+                                <th scope="col">الفرقة الدراسية</th>
+                                <th scope="col">اسم المقرر</th>
+                                <th scope="col">اسم المحاضر/المعيد</th>
+                                <th scope="col">وقت بدء الجلسة</th>
+                                <th scope="col">وقت انتهاء الجلسة</th>
+                                <th scope="col">المكان</th>
+                                <th scope="col">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sessions-table-body">
+                            <!-- سيتم ملء هذا الجزء ديناميكيًا باستخدام JavaScript -->
+                            <!-- example row -->
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>2024-06-01</td>
+                                <td>محاضرة</td>
+                                <td>الفرقة الأولى</td>
+                                <td>الرياضيات</td>
+                                <td>أحمد محمد</td>
+                                <td>08:00 AM</td>
+                                <td>10:00 AM</td>
+                                <td>المبنى الرئيسي - القاعة 101</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-success">تعديل</button>
+                                    <button class="btn btn-sm btn-outline-danger">حذف</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">2</th>
+                                <td>2024-06-02</td>
+                                <td>سكشن</td>
+                                <td>الفرقة الثانية</td>
+                                <td>الفيزياء</td>
+                                <td>سارة علي</td>
+                                <td>10:30 AM</td>
+                                <td>12:00 PM</td>
+                                <td>المبنى العلمي - القاعة 202</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-success">تعديل</button>
+                                    <button class="btn btn-sm btn-outline-danger">حذف</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
     </section>
-    
+
 </body>
+
 </html>
