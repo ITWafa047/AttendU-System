@@ -278,7 +278,7 @@ class ImageValidator:
         Validate that the image has a white (or near-white), uniform background.
 
         Args:
-            image:          BGR numpy array (as returned by cv2.imread).
+            image:          RGB numpy array (converted from BGR in load_image).
             face:           Face dict containing 'bbox': (x, y, w, h).
         Returns:
             (True,  "Background is valid")              — all checks passed.
@@ -438,11 +438,12 @@ class ImageValidator:
 
         Performs:
             - Eye-based rotation to horizontally align the eyes
-            - Cropping using the face bounding box
+            - Transforms bounding box coordinates through rotation matrix
+            - Cropping using the rotated bounding box
             - Resizing to 112x112 (ArcFace standard)
 
         Args:
-            image (np.ndarray): Full input image as a NumPy array (BGR or RGB).
+            image (np.ndarray): Full input image as a NumPy array (RGB format).
             face (dict): Face detection result containing:
                 - 'bbox'       : [x1, y1, x2, y2]  (or [x, y, w, h] — handled below)
                 - 'landmarks'  : dict with keys:
@@ -514,7 +515,7 @@ class ImageValidator:
         )
 
         # ------------------------------------------------------------------ #
-        # 5. Extract bounding box and crop the aligned face
+        # 5. Extract bounding box and transform coordinates through rotation
         # ------------------------------------------------------------------ #
         bbox = face.get("bbox")
         if bbox is None:
@@ -534,23 +535,42 @@ class ImageValidator:
 
         # If v3/v4 are small relative to x/y, they're likely width/height; otherwise coordinates
         if v3 < 500 and v4 < 656:  # Reasonable size bounds for face width/height
-            x1 = int(round(x))
-            y1 = int(round(y))
-            x2 = x1 + int(round(v3))
-            y2 = y1 + int(round(v4))
+            x1_orig = int(round(x))
+            y1_orig = int(round(y))
+            x2_orig = x1_orig + int(round(v3))
+            y2_orig = y1_orig + int(round(v4))
         else:
-            x1, y1, x2, y2 = [int(round(v)) for v in bbox]
+            x1_orig, y1_orig, x2_orig, y2_orig = [int(round(v)) for v in bbox]
 
-        # Clamp to image boundaries
+        # Transform bbox corners through rotation matrix
+        # The rotation matrix is 2x3: [[cos, -sin, tx], [sin, cos, ty]]
+        # Apply transformation: point' = rotation_matrix @ [x, y, 1]
+        corners = np.array(
+            [
+                [x1_orig, y1_orig, 1],  # top-left
+                [x2_orig, y1_orig, 1],  # top-right
+                [x1_orig, y2_orig, 1],  # bottom-left
+                [x2_orig, y2_orig, 1],  # bottom-right
+            ]
+        ).T  # (3, 4) for matrix multiplication
+
+        # Transform all corners through rotation matrix: (2, 3) @ (3, 4) -> (2, 4)
+        rotated_corners = rotation_matrix @ corners
+
+        # Get new bounding box from transformed corners
+        x1 = int(np.floor(np.min(rotated_corners[0, :])))
+        y1 = int(np.floor(np.min(rotated_corners[1, :])))
+        x2 = int(np.ceil(np.max(rotated_corners[0, :])))
+        y2 = int(np.ceil(np.max(rotated_corners[1, :])))
+
+        # Clamp to rotated image boundaries
         x1 = max(0, x1)
         y1 = max(0, y1)
         x2 = min(w, x2)
         y2 = min(h, y2)
 
         if x2 <= x1 or y2 <= y1:
-            raise ValueError(
-                f"Invalid bounding box after clamping: [{x1},{y1},{x2},{y2}]"
-            )
+            raise ValueError(f"Invalid transformed bounding box: [{x1},{y1},{x2},{y2}]")
 
         aligned_face = aligned_image[y1:y2, x1:x2]
 
@@ -563,9 +583,9 @@ class ImageValidator:
 
         return aligned_face
 
-    async def final_process(self, student_id, file: UploadFile) -> np.ndarray:
+    async def final_process(self, file: UploadFile) -> np.ndarray:
         """
-        Run the full image validation pipeline and return a clean face crop.
+        Run the full image validation pipeline and return a face embedding.
 
         Steps (fail-fast — first failure raises immediately):
             1. validate_format   — allowed MIME type & extension
@@ -578,6 +598,7 @@ class ImageValidator:
             8. align_face        — eye-based rotation & 112×112 resize
             9. validate_blur     — Laplacian sharpness check
             10. validate_brightness — mean intensity check
+            11. generate_embedding — robust embedding with augmentations
 
         Parameters
         ----------
@@ -587,7 +608,7 @@ class ImageValidator:
         Returns
         -------
         np.ndarray
-            A validated, aligned, 112×112 RGB face region ready for ArcFace embedding.
+            A (512,) normalized face embedding ready for comparison and storage.
 
         Raises
         ------
@@ -629,14 +650,9 @@ class ImageValidator:
         # Step 10: brightness (validate on aligned face)
         self.validate_brightness(face_region)
 
-        # Step 11: Preprocessing for face
-        face_process = FaceProcessor.preprocess(face_region)
+        faces_embedding = FaceProcessor.generate_embedding(face_region)
 
-        # Step 12: Extract embedding from face
-        face_embedding = FaceProcessor.extract_embedding(face_process)
-
-        # Step 13: All checks passed
-        return face_embedding
+        return faces_embedding
 
 
 class FaceProcessor:
@@ -690,17 +706,102 @@ class FaceProcessor:
         return embedding
 
     @staticmethod
-    def normalize_embedding():
-        pass
+    def generate_embedding(face: np.ndarray, model_path="arcface.onnx") -> np.ndarray:
+        """
+        Generate robust face embedding using augmented samples.
 
-    @staticmethod
-    def augment_image():
-        pass
-    
-    @staticmethod
-    def generate_embeddings():
-        pass
+        Creates multiple augmented versions of the input face (original, flipped,
+        brightness variations, rotated ±10°), extracts embeddings for each, computes
+        the mean embedding, and returns the normalized result.
 
-    @staticmethod
-    def aggregate_embeddings():
-        pass
+        Augmentation Strategy:
+            - Original: Baseline unmodified face
+            - Flipped: Horizontal flip to capture symmetric features
+            - Brightness ±40: Additive brightness shifts (preserves contrast)
+            - Rotated ±10°: Both positive and negative rotations (robustness to head tilt)
+
+        Args:
+            face (np.ndarray): Aligned face image of shape (112, 112, 3) in RGB format (uint8).
+            model_path (str): Path to the ArcFace ONNX model. Defaults to "arcface.onnx".
+
+        Returns:
+            np.ndarray: (512,) normalized mean embedding across augmentations.
+
+        Raises:
+            ValueError: If input shape is invalid or dtype is not uint8.
+        """
+        # Step 1: Validate input
+        if face.shape != (112, 112, 3):
+            raise ValueError(f"Expected face shape (112, 112, 3), got {face.shape}")
+        if face.dtype != np.uint8:
+            raise ValueError(f"Expected uint8 input, got {face.dtype}")
+
+        # Step 2: Create augmentations (all kept as uint8 for consistency)
+        augmentations = []
+
+        # 2.1: Original — baseline unmodified face
+        augmentations.append(face)
+
+        # 2.2: Horizontally flipped — captures symmetric features
+        flipped = cv2.flip(face, 1)
+        augmentations.append(flipped)
+
+        # 2.3: Brightness +40 (additive shift preserves contrast better than multiplicative)
+        # Note: int16 prevents underflow/overflow during addition
+        bright_plus = np.clip(face.astype(np.int16) + 40, 0, 255).astype(np.uint8)
+        augmentations.append(bright_plus)
+
+        # 2.4: Brightness -40 (additive shift preserves contrast better than multiplicative)
+        # Note: int16 prevents underflow during subtraction
+        bright_minus = np.clip(face.astype(np.int16) - 40, 0, 255).astype(np.uint8)
+        augmentations.append(bright_minus)
+
+        # 2.5: Rotated +10 degrees (clockwise tilt)
+        height, width = 112, 112
+        center = (width / 2, height / 2)
+        rotation_matrix_pos = cv2.getRotationMatrix2D(center, 10, 1.0)
+        rotated_pos = cv2.warpAffine(
+            face,
+            rotation_matrix_pos,
+            (width, height),
+            borderMode=cv2.BORDER_REFLECT_101,
+            flags=cv2.INTER_LINEAR,
+        ).astype(
+            np.uint8
+        )  # Ensure uint8 dtype
+        augmentations.append(rotated_pos)
+
+        # 2.6: Rotated -10 degrees (counter-clockwise tilt) — bidirectional augmentation
+        rotation_matrix_neg = cv2.getRotationMatrix2D(center, -10, 1.0)
+        rotated_neg = cv2.warpAffine(
+            face,
+            rotation_matrix_neg,
+            (width, height),
+            borderMode=cv2.BORDER_REFLECT_101,
+            flags=cv2.INTER_LINEAR,
+        ).astype(
+            np.uint8
+        )  # Ensure uint8 dtype
+        augmentations.append(rotated_neg)
+
+        # Step 3: Extract embeddings for each augmentation
+        embeddings = []
+        for aug_image in augmentations:
+            # Preprocess the augmented image
+            preprocessed = FaceProcessor.preprocess(aug_image)
+            # Extract embedding
+            embedding = FaceProcessor.extract_embedding(preprocessed, model_path)
+            embeddings.append(embedding)
+
+        # Step 4: Stack embeddings into array (6_augmentations, 512)
+        embeddings_stack = np.stack(embeddings, axis=0)
+
+        # Step 5: Compute mean embedding across augmentations
+        mean_embedding = np.mean(embeddings_stack, axis=0)
+
+        # Step 6: Normalize final embedding (L2 normalization)
+        norm = np.linalg.norm(mean_embedding)
+        normalized_embedding = mean_embedding / norm if norm > 0 else mean_embedding
+
+        # Step 7: Return normalized mean embedding
+        return normalized_embedding
