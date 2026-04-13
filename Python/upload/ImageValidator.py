@@ -6,6 +6,9 @@ from retinaface import RetinaFace
 
 
 class ImageValidator:
+    """
+    ImageValidator is a comprehensive utility class designed to validate and process uploaded images for face recognition applications. It performs a series of checks to ensure that the input image meets the necessary criteria for accurate face embedding extraction using ArcFace.
+    """
 
     def __init__(self):
 
@@ -51,7 +54,7 @@ class ImageValidator:
         raw_bytes = await file.read()
 
         if not raw_bytes:
-            raise ValueError("No file uplaoded")
+            raise ValueError("No file uploaded")
 
         # Step 3: Convert bytes to NumPy array
         try:
@@ -270,14 +273,14 @@ class ImageValidator:
         return face_region
 
     def validate_background(
-        self, image: np.ndarray, face: Tuple[int, int, int, int]
+        self, image: np.ndarray, face: dict
     ) -> Tuple[bool, str]:
         """
         Validate that the image has a white (or near-white), uniform background.
 
         Args:
             image:          BGR numpy array (as returned by cv2.imread).
-            face:           Bounding box of the detected face as (x, y, w, h).
+            face:           Face dict containing 'bbox': (x, y, w, h).
         Returns:
             (True,  "Background is valid")              — all checks passed.
             (False, "<reason>")                         — first failing check.
@@ -293,8 +296,12 @@ class ImageValidator:
         # Step 2: Extract image dimensions
         image_height, image_width = image.shape[:2]
 
-        # Step 3: Create background mask (exclude face region)
-        x, y, w, h = face
+        # Step 3: Extract bounding box from face dict and create background mask
+        bbox = face.get("bbox")
+        if bbox is None:
+            return False, "Face bounding box not found"
+        
+        x, y, w, h = int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])
 
         x1 = max(0, x)
         y1 = max(0, y)
@@ -346,7 +353,7 @@ class ImageValidator:
         Validate that a face image is sharp enough for embedding extraction.
 
         Args:
-            face_region: numpy array of the cropped face region (BGR format)
+            face_region: numpy array of the cropped face region (RGB format)
 
         Returns:
             True if image is sharp enough
@@ -388,26 +395,171 @@ class ImageValidator:
         Validates that a face image has proper lighting.
 
         Args:
-            face_region: numpy array — cropped face image (BGR format)
+            face_region: numpy array — cropped face image (RGB format)
 
         Returns:
-            True if brightness is valid, or a string error message if not.
+            True if brightness is valid
+
+        Raises:
+            ValueError: if the image is too dark, too bright, or invalid
         """
 
-        # Step 1: Convert to Grayscale
-        gray = cv2.cvtColor(face_region, cv2.COLOR_RGB2GRAY)
+        # Step 1: Input validation
+        if face_region is None or face_region.size == 0:
+            raise ValueError("Invalid face region: empty or None image provided")
 
-        # Step 2: Compute Average Brightness
-        mean_intensity = gray.mean()
+        # Step 2: Convert to Grayscale
+        if len(face_region.shape) == 3:
+            gray = cv2.cvtColor(face_region, cv2.COLOR_RGB2GRAY)
+        else:
+            gray = face_region.copy()
 
-        # Step 3: Validate Brightness
+        # Step 3: Compute Average Brightness
+        mean_intensity = float(gray.mean())
+
+        # Step 4: Validate Brightness
         if mean_intensity < self.MIN_BRIGHTNESS:
-            return "Image is too dark"
+            raise ValueError(
+                f"Image is too dark (mean intensity: {mean_intensity:.1f}, "
+                f"minimum required: {self.MIN_BRIGHTNESS})"
+            )
         elif mean_intensity > self.MAX_BRIGHTNESS:
-            return "Image is too bright"
+            raise ValueError(
+                f"Image is too bright (mean intensity: {mean_intensity:.1f}, "
+                f"maximum allowed: {self.MAX_BRIGHTNESS})"
+            )
 
-        # Step 4: Return Success
+        # Step 5: All checks passed
         return True
+
+    def align_face(self, image: np.ndarray, face: dict) -> np.ndarray:
+        """
+        Align a face for ArcFace model input.
+
+        Performs:
+            - Eye-based rotation to horizontally align the eyes
+            - Cropping using the face bounding box
+            - Resizing to 112x112 (ArcFace standard)
+
+        Args:
+            image (np.ndarray): Full input image as a NumPy array (BGR or RGB).
+            face (dict): Face detection result containing:
+                - 'bbox'       : [x1, y1, x2, y2]  (or [x, y, w, h] — handled below)
+                - 'landmarks'  : dict with keys:
+                                    'left_eye'  : (x, y)
+                                    'right_eye' : (x, y)
+                                    'nose'      : (x, y)  [optional]
+
+        Returns:
+            np.ndarray: Aligned and resized face image of shape (112, 112, 3).
+
+        Raises:
+            ValueError: If landmarks are missing or coordinates are invalid.
+        """
+
+        # ------------------------------------------------------------------ #
+        # 1. Validate & extract landmarks
+        # ------------------------------------------------------------------ #
+        landmarks = face.get("landmarks")
+        if not landmarks:
+            raise ValueError(
+                "Face landmarks not found. "
+                "Use a detector that returns landmarks (e.g. RetinaFace, MTCNN)."
+            )
+
+        left_eye = landmarks.get("left_eye")
+        right_eye = landmarks.get("right_eye")
+
+        if left_eye is None or right_eye is None:
+            raise ValueError(
+                "Invalid face landmarks: 'left_eye' and 'right_eye' are required."
+            )
+
+        try:
+            left_eye_center = (float(left_eye[0]), float(left_eye[1]))
+            right_eye_center = (float(right_eye[0]), float(right_eye[1]))
+        except (TypeError, IndexError):
+            raise ValueError(
+                "Invalid face landmarks: eye coordinates must be (x, y) tuples."
+            )
+
+        # ------------------------------------------------------------------ #
+        # 2. Compute the rotation angle from eye positions
+        # ------------------------------------------------------------------ #
+        delta_x = right_eye_center[0] - left_eye_center[0]
+        delta_y = right_eye_center[1] - left_eye_center[1]
+
+        # angle in degrees — positive = counter-clockwise correction needed
+        angle = float(np.degrees(np.arctan2(delta_y, delta_x)))
+
+        # ------------------------------------------------------------------ #
+        # 3. Compute rotation center = midpoint between the two eyes
+        # ------------------------------------------------------------------ #
+        center = (
+            (left_eye_center[0] + right_eye_center[0]) / 2.0,
+            (left_eye_center[1] + right_eye_center[1]) / 2.0,
+        )
+
+        # ------------------------------------------------------------------ #
+        # 4. Build rotation matrix & rotate the full image
+        # ------------------------------------------------------------------ #
+        h, w = image.shape[:2]
+        rotation_matrix = cv2.getRotationMatrix2D(center, angle, scale=1.0)
+        aligned_image = cv2.warpAffine(
+            image,
+            rotation_matrix,
+            (w, h),
+            flags=cv2.INTER_LINEAR,
+            borderMode=cv2.BORDER_REFLECT_101,
+        )
+
+        # ------------------------------------------------------------------ #
+        # 5. Extract bounding box and crop the aligned face
+        # ------------------------------------------------------------------ #
+        bbox = face.get("bbox")
+        if bbox is None:
+            raise ValueError("Face bounding box ('bbox') not found in face dict.")
+
+        try:
+            bbox = [float(v) for v in bbox]
+        except (TypeError, ValueError):
+            raise ValueError("Invalid bounding box: values must be numeric.")
+
+        # Support both [x1,y1,x2,y2] and [x,y,w,h] formats
+        if len(bbox) == 4:
+            # Heuristic: if bbox[2] > bbox[0] and bbox[3] > bbox[1] treat as x1y1x2y2
+            if bbox[2] > bbox[0] and bbox[3] > bbox[1]:
+                x1, y1, x2, y2 = [int(round(v)) for v in bbox]
+            else:
+                # Treat as x, y, w, h
+                x1 = int(round(bbox[0]))
+                y1 = int(round(bbox[1]))
+                x2 = x1 + int(round(bbox[2]))
+                y2 = y1 + int(round(bbox[3]))
+        else:
+            raise ValueError("Invalid bounding box: expected 4 values.")
+
+        # Clamp to image boundaries
+        x1 = max(0, x1)
+        y1 = max(0, y1)
+        x2 = min(w, x2)
+        y2 = min(h, y2)
+
+        if x2 <= x1 or y2 <= y1:
+            raise ValueError(
+                f"Invalid bounding box after clamping: [{x1},{y1},{x2},{y2}]"
+            )
+
+        aligned_face = aligned_image[y1:y2, x1:x2]
+
+        # ------------------------------------------------------------------ #
+        # 6. Resize to ArcFace standard input size (112 × 112)
+        # ------------------------------------------------------------------ #
+        aligned_face = cv2.resize(
+            aligned_face, (112, 112), interpolation=cv2.INTER_LINEAR
+        )
+
+        return aligned_face
 
     def process(self, file: UploadFile) -> np.ndarray:
         """
@@ -415,14 +567,15 @@ class ImageValidator:
 
         Steps (fail-fast — first failure raises immediately):
             1. validate_format   — allowed MIME type & extension
-            2. load_image        — decode bytes → BGR numpy array
+            2. load_image        — decode bytes → RGB numpy array
             3. validate_size     — minimum resolution check
-            4. detect_faces      — Haar cascade detection
+            4. detect_faces      — face detection with RetinaFace
             5. validate_single_face — exactly one face required
-            6. validate_face_quality — size ratio + 112×112 crop
-            7. validate_background — uniform background check
-            8. validate_blur     — Laplacian sharpness check
-            9. validate_brightness — mean grey-level check
+            6. validate_face_quality — size ratio + bbox validation
+            7. validate_background — uniform white background check
+            8. align_face        — eye-based rotation & 112×112 resize
+            9. validate_blur     — Laplacian sharpness check
+            10. validate_brightness — mean intensity check
 
         Parameters
         ----------
@@ -432,13 +585,15 @@ class ImageValidator:
         Returns
         -------
         np.ndarray
-            A validated, 112×112 BGR face region ready for ArcFace embedding.
+            A validated, aligned, 112×112 RGB face region ready for ArcFace embedding.
 
         Raises
         ------
         ValueError
             On any format, size, face count, quality, background,
             blur, or brightness failure.
+        HTTPException
+            On file format validation failures or face detection errors.
         RuntimeError
             If the face detector itself cannot be initialised.
         """
@@ -453,19 +608,24 @@ class ImageValidator:
 
         # Step 4 & 5: detect + single-face check
         faces = self.detect_faces(image)
-        face = self.validate_single_face(faces)
+        face = self.validate_single_face(faces["faces"])
 
         # Step 6: face quality + crop
         face_region: np.ndarray = self.validate_face_quality(image, face)
 
-        # Step 7: background
-        self.validate_background(image, face)
+        # Step 7: background (validate before alignment on original image)
+        is_valid, bg_msg = self.validate_background(image, face)
+        if not is_valid:
+            raise ValueError(f"Background validation failed: {bg_msg}")
 
-        # Step 8: blur
+        # Step 8: align face for ArcFace input
+        face_region = self.align_face(image, face)
+
+        # Step 9: blur (validate on aligned face)
         self.validate_blur(face_region)
 
-        # Step 9: brightness
+        # Step 10: brightness (validate on aligned face)
         self.validate_brightness(face_region)
 
-        # Step 10: All checks passed
+        # Step 11: All checks passed
         return face_region
