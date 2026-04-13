@@ -3,6 +3,7 @@ import cv2
 from fastapi import UploadFile, HTTPException
 from typing import Optional, Union, Tuple
 from retinaface import RetinaFace
+from database.mongodb_service import MongoDBService
 
 
 class ImageValidator:
@@ -272,9 +273,7 @@ class ImageValidator:
         # Step 8: Return valid face region
         return face_region
 
-    def validate_background(
-        self, image: np.ndarray, face: dict
-    ) -> Tuple[bool, str]:
+    def validate_background(self, image: np.ndarray, face: dict) -> Tuple[bool, str]:
         """
         Validate that the image has a white (or near-white), uniform background.
 
@@ -300,7 +299,7 @@ class ImageValidator:
         bbox = face.get("bbox")
         if bbox is None:
             return False, "Face bounding box not found"
-        
+
         x, y, w, h = int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])
 
         x1 = max(0, x)
@@ -561,7 +560,7 @@ class ImageValidator:
 
         return aligned_face
 
-    def process(self, file: UploadFile) -> np.ndarray:
+    def final_process(self, file: UploadFile) -> np.ndarray:
         """
         Run the full image validation pipeline and return a clean face crop.
 
@@ -629,3 +628,30 @@ class ImageValidator:
 
         # Step 11: All checks passed
         return face_region
+
+
+class FaceProcessor:
+    """
+    FaceProcessor is responsible for processing face images, including preprocessing, embedding extraction, normalization, augmentation, and aggregation.
+    """
+
+    def __init__(self):
+        pass
+
+    def preprocess(self):
+        pass
+
+    def extract_embedding(self):
+        pass
+
+    def normalize_embedding(self):
+        pass
+
+    def augment_image(self):
+        pass
+
+    def generate_embeddings(self):
+        pass
+
+    def aggregate_embeddings(self):
+        pass

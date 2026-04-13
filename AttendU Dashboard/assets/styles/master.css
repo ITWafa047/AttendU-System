@@ -274,6 +274,12 @@ header {
     color: #fff;
 }
 
+.statistics .row>div:nth-child(9) .card {
+    background: rgb(0, 84, 180);
+    background: linear-gradient(159deg, rgba(0, 84, 180, 1) 0%, rgba(64, 224, 208, 1) 100%);
+    color: #fff;
+}
+
 /* Responsive Design */
 @media (max-width: 1199px) {
     .sidebar {
