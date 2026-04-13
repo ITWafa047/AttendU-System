@@ -3,7 +3,7 @@ import cv2
 from fastapi import UploadFile, HTTPException
 from typing import Optional, Union, Tuple
 from retinaface import RetinaFace
-from database.mongodb_service import MongoDBService
+import onnxruntime as ort
 
 
 class ImageValidator:
@@ -315,6 +315,7 @@ class ImageValidator:
             return False, "No background pixels found outside the face region"
 
         # Step 4: Convert to grayscale for brightness analysis
+        # Note: image is in RGB format (converted at line 77)
         if len(image.shape) == 3 and image.shape[2] == 3:
             gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         else:
@@ -525,18 +526,20 @@ class ImageValidator:
             raise ValueError("Invalid bounding box: values must be numeric.")
 
         # Support both [x1,y1,x2,y2] and [x,y,w,h] formats
-        if len(bbox) == 4:
-            # Heuristic: if bbox[2] > bbox[0] and bbox[3] > bbox[1] treat as x1y1x2y2
-            if bbox[2] > bbox[0] and bbox[3] > bbox[1]:
-                x1, y1, x2, y2 = [int(round(v)) for v in bbox]
-            else:
-                # Treat as x, y, w, h
-                x1 = int(round(bbox[0]))
-                y1 = int(round(bbox[1]))
-                x2 = x1 + int(round(bbox[2]))
-                y2 = y1 + int(round(bbox[3]))
-        else:
+        if len(bbox) != 4:
             raise ValueError("Invalid bounding box: expected 4 values.")
+
+        # Improved format detection: check if values appear to be width/height or coordinates
+        x, y, v3, v4 = bbox
+
+        # If v3/v4 are small relative to x/y, they're likely width/height; otherwise coordinates
+        if v3 < 500 and v4 < 656:  # Reasonable size bounds for face width/height
+            x1 = int(round(x))
+            y1 = int(round(y))
+            x2 = x1 + int(round(v3))
+            y2 = y1 + int(round(v4))
+        else:
+            x1, y1, x2, y2 = [int(round(v)) for v in bbox]
 
         # Clamp to image boundaries
         x1 = max(0, x1)
@@ -560,7 +563,7 @@ class ImageValidator:
 
         return aligned_face
 
-    def final_process(self, student_id, file: UploadFile) -> np.ndarray:
+    async def final_process(self, student_id, file: UploadFile) -> np.ndarray:
         """
         Run the full image validation pipeline and return a clean face crop.
 
@@ -597,10 +600,10 @@ class ImageValidator:
             If the face detector itself cannot be initialised.
         """
         # Step 1: format
-        self.validate_format(file)
+        await self.validate_format(file)
 
         # Step 2: load
-        image: np.ndarray = self.load_image(file)
+        image: np.ndarray = await self.load_image(file)
 
         # Step 3: size
         self.validate_size(image)
@@ -627,10 +630,13 @@ class ImageValidator:
         self.validate_brightness(face_region)
 
         # Step 11: Preprocessing for face
-        face_region = FaceProcessor.preprocess(face_region)
+        face_process = FaceProcessor.preprocess(face_region)
 
-        # Step 11: All checks passed
-        return face_region
+        # Step 12: Extract embedding from face
+        face_embedding = FaceProcessor.extract_embedding(face_process)
+
+        # Step 13: All checks passed
+        return face_embedding
 
 
 class FaceProcessor:
@@ -638,8 +644,14 @@ class FaceProcessor:
     FaceProcessor is responsible for processing face images, including preprocessing, embedding extraction, normalization, augmentation, and aggregation.
     """
 
+    # Class-level session cache to avoid reloading model on every call
+    _session = None
+    _current_model_path = None
+    providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
+
     @staticmethod
     def preprocess(aligned_face: np.ndarray) -> np.ndarray:
+        """Preprocess aligned face for ArcFace model input."""
         if aligned_face.shape != (112, 112, 3):
             raise ValueError("Input image must be 112x112 with 3 channels")
 
@@ -649,17 +661,46 @@ class FaceProcessor:
         image = np.expand_dims(image, axis=0)
         return image
 
-    def extract_embedding():
-        pass
+    @staticmethod
+    def extract_embedding(
+        preprocessed_image: np.ndarray, model_path="arcface.onnx"
+    ) -> np.ndarray:
+        """Extract face embedding using ArcFace model with GPU acceleration."""
+        # Lazy-load and cache the model session to avoid reloading on every call
+        if (
+            FaceProcessor._session is None
+            or FaceProcessor._current_model_path != model_path
+        ):
+            FaceProcessor._session = ort.InferenceSession(
+                model_path, providers=FaceProcessor.providers
+            )
+            FaceProcessor._current_model_path = model_path
 
+        input_name = FaceProcessor._session.get_inputs()[0].name
+        output_name = FaceProcessor._session.get_outputs()[0].name
+
+        output = FaceProcessor._session.run(
+            [output_name], {input_name: preprocessed_image}
+        )
+
+        embedding = output[0][0]
+        norm = np.linalg.norm(embedding)
+        embedding = embedding / norm if norm > 0 else embedding
+
+        return embedding
+
+    @staticmethod
     def normalize_embedding():
         pass
 
+    @staticmethod
     def augment_image():
         pass
-
+    
+    @staticmethod
     def generate_embeddings():
         pass
 
+    @staticmethod
     def aggregate_embeddings():
         pass
