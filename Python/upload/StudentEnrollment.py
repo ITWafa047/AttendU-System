@@ -560,7 +560,7 @@ class ImageValidator:
 
         return aligned_face
 
-    def final_process(self, file: UploadFile) -> np.ndarray:
+    def final_process(self, student_id, file: UploadFile) -> np.ndarray:
         """
         Run the full image validation pipeline and return a clean face crop.
 
@@ -626,6 +626,9 @@ class ImageValidator:
         # Step 10: brightness (validate on aligned face)
         self.validate_brightness(face_region)
 
+        # Step 11: Preprocessing for face
+        face_region = FaceProcessor.preprocess(face_region)
+
         # Step 11: All checks passed
         return face_region
 
@@ -635,23 +638,28 @@ class FaceProcessor:
     FaceProcessor is responsible for processing face images, including preprocessing, embedding extraction, normalization, augmentation, and aggregation.
     """
 
-    def __init__(self):
+    @staticmethod
+    def preprocess(aligned_face: np.ndarray) -> np.ndarray:
+        if aligned_face.shape != (112, 112, 3):
+            raise ValueError("Input image must be 112x112 with 3 channels")
+
+        image = aligned_face.astype(np.float32)
+        image = image / 127.5 - 1
+        image = np.transpose(image, (2, 0, 1))
+        image = np.expand_dims(image, axis=0)
+        return image
+
+    def extract_embedding():
         pass
 
-    def preprocess(self):
+    def normalize_embedding():
         pass
 
-    def extract_embedding(self):
+    def augment_image():
         pass
 
-    def normalize_embedding(self):
+    def generate_embeddings():
         pass
 
-    def augment_image(self):
-        pass
-
-    def generate_embeddings(self):
-        pass
-
-    def aggregate_embeddings(self):
+    def aggregate_embeddings():
         pass
