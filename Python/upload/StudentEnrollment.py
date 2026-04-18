@@ -534,7 +534,7 @@ class ImageValidator:
         x, y, v3, v4 = bbox
 
         # If v3/v4 are small relative to x/y, they're likely width/height; otherwise coordinates
-        if v3 < 500 and v4 < 656:  # Reasonable size bounds for face width/height
+        if v3 < self.MIN_WIDTH and v4 < self.MIN_HEIGHT:  # Reasonable size bounds for face width/height
             x1_orig = int(round(x))
             y1_orig = int(round(y))
             x2_orig = x1_orig + int(round(v3))
@@ -607,8 +607,9 @@ class ImageValidator:
 
         Returns
         -------
-        np.ndarray
-            A (512,) normalized face embedding ready for comparison and storage.
+        Tuple[np.ndarray, np.ndarray]
+            - mean_embedding: (512,) normalized mean embedding
+            - embeddings_augmentations: (6, 512) stack of augmented embeddings
 
         Raises
         ------
@@ -650,9 +651,12 @@ class ImageValidator:
         # Step 10: brightness (validate on aligned face)
         self.validate_brightness(face_region)
 
-        faces_embedding = FaceProcessor.generate_embedding(face_region)
+        mean_embedding, embeddings_augmentations = FaceProcessor.generate_embedding(face_region)
 
-        return faces_embedding
+        return mean_embedding, embeddings_augmentations
+
+
+
 
 
 class FaceProcessor:
@@ -725,7 +729,8 @@ class FaceProcessor:
             model_path (str): Path to the ArcFace ONNX model. Defaults to "arcface.onnx".
 
         Returns:
-            np.ndarray: (512,) normalized mean embedding across augmentations.
+            - np.ndarray: (512,) normalized mean embedding across augmentations.
+            - np.ndarray: (6, 512) stack of all extracted embeddings.
 
         Raises:
             ValueError: If input shape is invalid or dtype is not uint8.
@@ -804,4 +809,4 @@ class FaceProcessor:
         normalized_embedding = mean_embedding / norm if norm > 0 else mean_embedding
 
         # Step 7: Return normalized mean embedding
-        return normalized_embedding
+        return normalized_embedding, embeddings_stack

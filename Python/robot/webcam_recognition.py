@@ -3,15 +3,14 @@ import pickle
 import numpy as np
 from face_engine import FaceEngine
 import time
+import os
 from anti_spoofing.anti_spoof_manager import AntiSpoofManager
 
-THRESHOLD = 0.68
-UPDATE_THRESHOLD = 0.82
+
 
 # Like API From Backend
-EMBEDDINGS_PATH = (
-    r"D:\Graduation Project 2026\Python\Files\ML Model\team_embeddings.pkl"
-)   
+BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+EMBEDDINGS_PATH = os.path.join(BASE_PATH, r"D:\\Graduation Project 2026\\Project Implementation\\AttendU System\\Python\\robot\\team_embeddings.pkl")   
 
 
 class WebcamRecognition:
@@ -22,6 +21,8 @@ class WebcamRecognition:
         self.last_update_time = {}
         self.UPDATE_INTERVAL = 600  # seconds
 
+        self.THRESHOLD = 0.68
+        self.UPDATE_THRESHOLD = 0.82
         self.anti_spoof = AntiSpoofManager()
 
         with open(embeddings_path, "rb") as f:
@@ -30,8 +31,7 @@ class WebcamRecognition:
 
     @staticmethod
     def cosine_similarity(emb1, emb2):
-        emb1 = emb1 / np.linalg.norm(emb1)
-        emb2 = emb2 / np.linalg.norm(emb2)
+        """Calculate cosine similarity between two embeddings (already normalized)."""
         return float(np.dot(emb1, emb2))
 
     def search_database(self, query_embedding):
@@ -67,62 +67,80 @@ class WebcamRecognition:
             pickle.dump(self.database, f)
 
     def run(self):
-
+        """Run the webcam recognition loop."""
         cap = cv2.VideoCapture(0)
 
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
+        try:
+            while True:
+                ret, frame = cap.read()
+                if not ret:
+                    print("❌ Failed to read frame from webcam")
+                    break
 
-            faces = self.face_engine.extract_from_frame(frame)
+                # Extract embedding from the first face
+                face_data = self.face_engine.extract_embedding(frame)
 
-            if faces:
-                for face in faces:
-                    bbox = face["bbox"]
-                    embedding = face["embedding"]
+                if face_data is not None:
+                    bbox = face_data["bbox"]
+                    embedding = face_data["embedding"]
 
-                    best_match, similarity = self.search_database(embedding)
+                    try:
+                        best_match, similarity = self.search_database(embedding)
 
-                    # Anti-spoofing verification first
-                    if best_match is not None and similarity >= THRESHOLD:
-                        is_live, message = self.anti_spoof.verify(best_match, face)
+                        # Anti-spoofing verification first
+                        if best_match is not None and similarity >= self.THRESHOLD:
+                            is_live, message = self.anti_spoof.verify(best_match, face_data)
 
-                        if is_live:
-                            color = (0, 255, 0)  # Green - Verified
-                            label = f"{best_match} (Verified)"
-                            
-                            # Update embedding if high confidence
-                            if similarity >= UPDATE_THRESHOLD:
-                                current_time = time.time()
-                                last_time = self.last_update_time.get(best_match, 0)
-                                if current_time - last_time > self.UPDATE_INTERVAL:
-                                    self.self_update(best_match, embedding)
-                                    self.last_update_time[best_match] = current_time
+                            if is_live:
+                                color = (0, 255, 0)  # Green - Verified
+                                label = f"{best_match} (Verified)"
+                                
+                                # Update embedding if high confidence
+                                if similarity >= self.UPDATE_THRESHOLD:
+                                    current_time = time.time()
+                                    last_time = self.last_update_time.get(best_match, 0)
+                                    if current_time - last_time > self.UPDATE_INTERVAL:
+                                        self.self_update(best_match, embedding)
+                                        self.last_update_time[best_match] = current_time
+                            else:
+                                color = (0, 0, 255)  # Red - Spoof detected
+                                label = f"{best_match} ({message})"
                         else:
-                            color = (0, 0, 255)  # Red - Spoof detected
-                            label = f"{best_match} ({message})"
-                    else:
-                        color = (0, 0, 255)  # Red - Unknown
-                        label = "Unknown"
+                            color = (0, 0, 255)  # Red - Unknown
+                            label = "Unknown"
 
-                    x1, y1, x2, y2 = map(int, bbox)
+                        x1, y1, x2, y2 = map(int, bbox)
 
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-                    cv2.putText(
-                        frame,
-                        label,
-                        (x1, y1 - 10),
-                        cv2.FONT_HERSHEY_COMPLEX,
-                        0.6,
-                        color,
-                        2,
-                    )
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+                        cv2.putText(
+                            frame,
+                            label,
+                            (x1, y1 - 10),
+                            cv2.FONT_HERSHEY_COMPLEX,
+                            0.6,
+                            color,
+                            2,
+                        )
+                    except Exception as e:
+                        print(f"❌ Error during face recognition: {str(e)}")
+                        cv2.putText(
+                            frame,
+                            "Error",
+                            (50, 50),
+                            cv2.FONT_HERSHEY_COMPLEX,
+                            0.8,
+                            (0, 0, 255),
+                            2,
+                        )
 
-            cv2.imshow("Face Recognition", frame)
+                cv2.imshow("Face Recognition", frame)
 
-            if cv2.waitKey(1) & 0xFF == ord("q"):
-                break
+                if cv2.waitKey(1) & 0xFF == ord("q"):
+                    print("👋 Exiting face recognition")
+                    break
 
-        cap.release()
-        cv2.destroyAllWindows()
+        except Exception as e:
+            print(f"❌ Critical error in main loop: {str(e)}")
+        finally:
+            cap.release()
+            cv2.destroyAllWindows()
