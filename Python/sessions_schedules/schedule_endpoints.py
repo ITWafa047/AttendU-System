@@ -23,6 +23,11 @@ from bson import ObjectId
 import sys
 from pathlib import Path
 
+# Add parent directory to sys.path to enable imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from database.mongodb_service import MongoDBService
+
+
 from create_schedules import (
     ScheduleCreateRequest,
     ScheduleResponse,
@@ -374,3 +379,29 @@ def register_schedule_endpoints(app: FastAPI, db_service):
             raise HTTPException(
                 status_code=500, detail=f"Failed to delete schedule: {str(e)}"
             )
+
+
+# ============================================================================
+# Main Entry Point
+# ============================================================================
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="Schedule API",
+    description="API for managing schedules",
+    version="1.0.0",
+)
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000,
+        workers=1,  # Single worker for GPU compatibility
+        log_level="info",
+    )
+
+# Initialize database service
+db_service = MongoDBService()
