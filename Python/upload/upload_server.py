@@ -4,6 +4,12 @@ from pydantic import BaseModel, Field
 from typing import List, Tuple, Optional
 import numpy as np
 import json
+import sys
+from pathlib import Path
+
+# Add parent directory to sys.path to enable imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from StudentEnrollment import ImageValidator, FaceProcessor
 from database.mongodb_service import MongoDBService
 
