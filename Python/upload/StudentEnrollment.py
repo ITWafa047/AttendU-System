@@ -2,8 +2,9 @@ import numpy as np
 import cv2
 from fastapi import UploadFile, HTTPException
 from typing import Optional, Union, Tuple
-from retinaface import RetinaFace
+from retinaface import RetinaFace # Error 
 import onnxruntime as ort
+import threading
 
 
 class ImageValidator:
@@ -533,8 +534,9 @@ class ImageValidator:
         # Improved format detection: check if values appear to be width/height or coordinates
         x, y, v3, v4 = bbox
 
-        # If v3/v4 are small relative to x/y, they're likely width/height; otherwise coordinates
-        if v3 < self.MIN_WIDTH and v4 < self.MIN_HEIGHT:  # Reasonable size bounds for face width/height
+        # If v3/v4 are face-sized dimensions, they're width/height; otherwise they're coordinates
+        # Face dimensions typically range 80-200px; if both are in this range, treat as [x,y,w,h]
+        if v3 <= self.MIN_FACE_WIDTH * 2 and v4 <= self.MIN_FACE_HEIGHT * 2:  # Face-sized dimensions
             x1_orig = int(round(x))
             y1_orig = int(round(y))
             x2_orig = x1_orig + int(round(v3))
@@ -583,7 +585,7 @@ class ImageValidator:
 
         return aligned_face
 
-    async def final_process(self, file: UploadFile) -> np.ndarray:
+    async def final_process(self, file: UploadFile) -> Tuple[np.ndarray, np.ndarray]:
         """
         Run the full image validation pipeline and return a face embedding.
 
@@ -667,6 +669,7 @@ class FaceProcessor:
     # Class-level session cache to avoid reloading model on every call
     _session = None
     _current_model_path = None
+    _session_lock = threading.Lock()  # Thread-safe access to cached session
     providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
 
     @staticmethod
@@ -687,21 +690,23 @@ class FaceProcessor:
     ) -> np.ndarray:
         """Extract face embedding using ArcFace model with GPU acceleration."""
         # Lazy-load and cache the model session to avoid reloading on every call
-        if (
-            FaceProcessor._session is None
-            or FaceProcessor._current_model_path != model_path
-        ):
-            FaceProcessor._session = ort.InferenceSession(
-                model_path, providers=FaceProcessor.providers
+        # Use lock to ensure thread-safe access to the cached session for both initialization AND inference
+        with FaceProcessor._session_lock:
+            if (
+                FaceProcessor._session is None
+                or FaceProcessor._current_model_path != model_path
+            ):
+                FaceProcessor._session = ort.InferenceSession(
+                    model_path, providers=FaceProcessor.providers
+                )
+                FaceProcessor._current_model_path = model_path
+
+            input_name = FaceProcessor._session.get_inputs()[0].name
+            output_name = FaceProcessor._session.get_outputs()[0].name
+
+            output = FaceProcessor._session.run(
+                [output_name], {input_name: preprocessed_image}
             )
-            FaceProcessor._current_model_path = model_path
-
-        input_name = FaceProcessor._session.get_inputs()[0].name
-        output_name = FaceProcessor._session.get_outputs()[0].name
-
-        output = FaceProcessor._session.run(
-            [output_name], {input_name: preprocessed_image}
-        )
 
         embedding = output[0][0]
         norm = np.linalg.norm(embedding)
@@ -710,7 +715,7 @@ class FaceProcessor:
         return embedding
 
     @staticmethod
-    def generate_embedding(face: np.ndarray, model_path="arcface.onnx") -> np.ndarray:
+    def generate_embedding(face: np.ndarray, model_path="arcface.onnx") -> Tuple[np.ndarray, np.ndarray]:
         """
         Generate robust face embedding using augmented samples.
 
