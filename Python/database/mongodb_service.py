@@ -23,6 +23,7 @@ class MongoDBService:
         self.client = None
         self.db = None
         self.students_collection = None
+        self.schedules_collection = None
     
     def connect(self):
         """Establish connection to MongoDB."""
@@ -32,6 +33,7 @@ class MongoDBService:
             self.client.admin.command('ping')
             self.db = self.client[self.db_name]
             self.students_collection = self.db['students']
+            self.schedules_collection = self.db['schedules']
             
             # Create compound unique index on (group_id, student_id)
             self.students_collection.create_index([("group_id", 1), ("student_id", 1)], unique=True)
@@ -184,3 +186,154 @@ class MongoDBService:
             return students
         except Exception as e:
             raise Exception(f"Failed to retrieve students: {str(e)}")
+    
+    # ========================================================================
+    # Schedule Collection Methods
+    # ========================================================================
+    
+    def insert_schedule(self, schedule_data: Dict) -> bool:
+        """
+        Insert a new schedule document.
+        
+        Args:
+            schedule_data: Dictionary containing schedule information
+                - course_name: str
+                - session_type: str
+                - day: str
+                - start_time: str
+                - end_time: str
+                - location: str
+                - instructor_name: str
+                - group_name: str
+                - session_date: Optional[str]
+        
+        Returns:
+            True if insertion successful, False otherwise
+        """
+        try:
+            # Add timestamps
+            schedule_data["created_at"] = datetime.utcnow()
+            schedule_data["updated_at"] = datetime.utcnow()
+            
+            result = self.schedules_collection.insert_one(schedule_data)
+            return result.inserted_id is not None
+        except Exception as e:
+            raise Exception(f"Failed to insert schedule: {str(e)}")
+    
+    def find_schedule_by_id(self, schedule_id: str) -> Optional[Dict]:
+        """
+        Find a schedule by ID.
+        
+        Args:
+            schedule_id: Schedule identifier (MongoDB ObjectId as string)
+        
+        Returns:
+            Schedule document if found, None otherwise
+        """
+        try:
+            from bson import ObjectId
+            schedule = self.schedules_collection.find_one({"_id": ObjectId(schedule_id)})
+            return schedule
+        except Exception as e:
+            raise Exception(f"Failed to find schedule: {str(e)}")
+    
+    def find_schedules_by_course(self, course_name: str) -> List[Dict]:
+        """
+        Find all schedules for a specific course.
+        
+        Args:
+            course_name: Course name
+        
+        Returns:
+            List of schedule documents for the course
+        """
+        try:
+            schedules = list(self.schedules_collection.find({"course_name": course_name}))
+            return schedules
+        except Exception as e:
+            raise Exception(f"Failed to retrieve schedules by course: {str(e)}")
+    
+    def find_schedules_by_group(self, group_name: str) -> List[Dict]:
+        """
+        Find all schedules for a specific group.
+        
+        Args:
+            group_name: Group name
+        
+        Returns:
+            List of schedule documents for the group
+        """
+        try:
+            schedules = list(self.schedules_collection.find({"group_name": group_name}))
+            return schedules
+        except Exception as e:
+            raise Exception(f"Failed to retrieve schedules by group: {str(e)}")
+    
+    def find_schedules_by_day(self, day: str) -> List[Dict]:
+        """
+        Find all schedules for a specific day.
+        
+        Args:
+            day: Day name (e.g., 'saturday', 'sunday', etc.)
+        
+        Returns:
+            List of schedule documents for the day
+        """
+        try:
+            schedules = list(self.schedules_collection.find({"day": day.lower()}))
+            return schedules
+        except Exception as e:
+            raise Exception(f"Failed to retrieve schedules by day: {str(e)}")
+    
+    def find_all_schedules(self) -> List[Dict]:
+        """
+        Find all schedules across all courses and groups.
+        
+        Returns:
+            List of all schedule documents
+        """
+        try:
+            schedules = list(self.schedules_collection.find({}))
+            return schedules
+        except Exception as e:
+            raise Exception(f"Failed to retrieve all schedules: {str(e)}")
+    
+    def update_schedule(self, schedule_id: str, schedule_data: Dict) -> bool:
+        """
+        Update an existing schedule document.
+        
+        Args:
+            schedule_id: Schedule identifier (MongoDB ObjectId as string)
+            schedule_data: Dictionary with updated schedule information
+        
+        Returns:
+            True if update successful, False if schedule not found
+        """
+        try:
+            from bson import ObjectId
+            schedule_data["updated_at"] = datetime.utcnow()
+            
+            result = self.schedules_collection.update_one(
+                {"_id": ObjectId(schedule_id)},
+                {"$set": schedule_data}
+            )
+            return result.matched_count > 0
+        except Exception as e:
+            raise Exception(f"Failed to update schedule: {str(e)}")
+    
+    def delete_schedule(self, schedule_id: str) -> bool:
+        """
+        Delete a schedule document.
+        
+        Args:
+            schedule_id: Schedule identifier (MongoDB ObjectId as string)
+        
+        Returns:
+            True if deletion successful, False if schedule not found
+        """
+        try:
+            from bson import ObjectId
+            result = self.schedules_collection.delete_one({"_id": ObjectId(schedule_id)})
+            return result.deleted_count > 0
+        except Exception as e:
+            raise Exception(f"Failed to delete schedule: {str(e)}")
