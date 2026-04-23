@@ -1,8 +1,4 @@
-"""
-StudentEnrollment.py - Corrected Version
-FIXED: Critical bugs in detect_faces(), brightness validation, type hints
-"""
-
+# Step 1: Import necessary libraries and configure logging
 import numpy as np
 import cv2
 from fastapi import UploadFile, HTTPException

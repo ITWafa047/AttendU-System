@@ -79,9 +79,24 @@
                 <div class="row sessions-table mt-5">
                     <h2>قائمة الطلاب المسجلين</h2>
                     <div class="col">
-                        <div class="search p-3" id="search-filter">
-                            <input type="search" placeholder="ابحث عن كود الطالب" class="form-control" />
+                        <div class="d-flex justify-content-start align-items-end w-100">
+
+                            <div class="search p-3 w-25" id="search-filter">
+                                <input type="search" placeholder="ابحث عن كود الطالب" class="form-control" />
+                            </div>
+                            <div class="class-type my-3 w-25">
+                                <label for="class-type-select" class="form-label">الفرقة الدراسية:</label>
+                                <select id="class-type-select" class="form-select">
+                                    <option selected>اختر اسم الفرقة الدراسية</option>
+                                    <option value="oneYear">الفرقة الاولي</option>
+                                    <option value="twoYear">الفرقة الثانية</option>
+                                    <option value="threeYear">الفرقة الثالثة</option>
+                                    <option value="fourYear">الفرقة الرابعة</option>
+                                </select>
+                            </div>
                         </div>
+
+
                         <table class="table table-bordered table-hover">
                             <thead>
                                 <tr>
@@ -109,7 +124,6 @@
                                     <td>
                                         <button class="btn btn-sm btn-outline-primary">بروفايل</button>
                                         <button class="btn btn-sm btn-outline-danger">حذف</button>
-                                        <button class="btn btn-sm btn-outline-success">تسجيل مقرر جديد</button>
                                     </td>
                                 </tr>
                             </tbody>
