@@ -10,7 +10,7 @@ from sqlalchemy import (
     Date,
     JSON,
 )
-from database import Base
+from database.settings import Base
 from sqlalchemy.orm import relationship
 
 
@@ -28,6 +28,7 @@ class Student(Base):
     __tablename__ = "students"
 
     student_id = Column(Integer, primary_key=True, index=True)
+    student_code = Column(String(50), unique=True)
     student_name = Column(String(100))
     email = Column(String(100), unique=True)
     phone_number = Column(String(20))
