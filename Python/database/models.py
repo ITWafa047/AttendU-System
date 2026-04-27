@@ -10,7 +10,7 @@ from sqlalchemy import (
     Date,
     JSON,
 )
-from database.settings import Base
+from settings import Base
 from sqlalchemy.orm import relationship
 
 
